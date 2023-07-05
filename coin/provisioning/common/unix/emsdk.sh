@@ -11,7 +11,7 @@ source "${BASH_SOURCE%/*}/DownloadURL.sh"
 version="3.1.56"
 versionNode="v16.20.0"
 tarBallVersion="${version//./_}"
-if uname -a |grep -q Darwin; then
+if uname -a | grep -q Darwin; then
     tarBallPackage="emsdk_macos_${tarBallVersion}.tar.gz"
     sha="24c49db971da4fd7c68f6b71984c3d7775fdfb84"
 else
@@ -22,7 +22,7 @@ cacheUrl="https://ci-files01-hki.ci.qt.io/input/emsdk/${tarBallPackage}"
 target="/tmp/${tarBallPackage}"
 
 mkdir -p /opt
-cd /opt
+cd /opt || exit
 echo "URL: $cacheUrl"
 
 if DownloadURL "$cacheUrl" "" "$sha" "$target"; then
@@ -31,13 +31,16 @@ if DownloadURL "$cacheUrl" "" "$sha" "$target"; then
 else
     echo "Emsdk isn't cached. Cloning it"
     sudo git clone https://github.com/emscripten-core/emsdk.git
-    cd emsdk
-    sudo ./emsdk install "$version"
+    cd emsdk || exit
+    if ! sudo ./emsdk install "$version"; then
+        echo "Error: emsdk installation failed"
+        exit 1
+    fi
     sudo ./emsdk activate "$version"
 fi
 
 # platform-specific toolchain and node binaries. urls obtained from "emsdk install"
-if uname -a |grep -q Darwin; then
+if uname -a | grep -q Darwin; then
     pathNodeExecutable="node-$versionNode-darwin-x64/bin/node"
 else
     pathNodeExecutable="node-$versionNode-linux-x64/bin/node"
