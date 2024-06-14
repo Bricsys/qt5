@@ -214,7 +214,7 @@ Configurations:
     ]
 -
     Id: 'ios-universal'
-    Template: 'qtci-macos-13-x86_64-103'
+    Template: 'qtci-macos-13-arm-107'
     Target os: 'IOS_ANY'
     Target arch: 'arm64'
     Compiler: 'Clang'
