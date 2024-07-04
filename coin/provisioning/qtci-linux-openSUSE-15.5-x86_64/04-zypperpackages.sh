@@ -3,6 +3,12 @@
 
 set -ex
 
+sudo zypper clean
+sudo rm -rf /var/cache/zypp
+sudo zypper rr repo-backports-update
+sudo zypper ar -f http://ftp.funet.fi/pub/mirrors/ftp.opensuse.com/pub/opensuse/update/leap/15.5/backports/ repo-backports-update
+sudo zypper refresh
+
 sudo zypper -nq install git gcc9 gcc9-c++ ninja
 sudo /usr/sbin/update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 1 \
                                      --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
