@@ -23,7 +23,7 @@ nonDottedReleaseTag=${vcpkgVersion//-/}
 
 vcpkgToolOfficialUrl="https://github.com/microsoft/vcpkg-tool/archive/refs/tags/$vcpkgToolReleaseTag.tar.gz"
 vcpkgToolCacheUrl="http://ci-files01-hki.ci.qt.io/input/vcpkg/vcpkg-tool-$nonDottedReleaseTag.tar.gz"
-vcpkgToolSHA1="c6029714fca0304779f10c9c1cbe4b061a2fd945"
+vcpkgToolSHA1="99a31b0bed2845f5c915735121d34c453126ec76"
 vcpkgToolSourceFolder="$HOME/vcpkg-tool-$vcpkgToolReleaseTag"
 vcpkgToolBuildFolder="$HOME/vcpkg-tool-$vcpkgToolReleaseTag/build"
 

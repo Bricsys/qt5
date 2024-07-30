@@ -34,9 +34,9 @@ if($arch -eq "x64") {
 }
 
 if($arch -eq "x64") {
-    $vcpkgExeSHA1 = "F74DCDE7F6F5082EF6DC31FED486FAD69BE8D442"
+    $vcpkgExeSHA1 = "484373186A905E9F39FE385F4FB59F263B9FFE95"
 } elseif($arch -eq "arm64") {
-    $vcpkgExeSHA1 = "75049DC9A6FB813EFB7B48B2140DE067E73E977C"
+    $vcpkgExeSHA1 = "E0C4CBCD64B867CE386886806D8CA9C84610545F"
 }
 
 $vcpkgExeOfficialUrl = "https://github.com/microsoft/vcpkg-tool/releases/download/$vcpkgExeReleaseTag/vcpkg$suffix.exe"
@@ -54,6 +54,10 @@ if(![System.IO.File]::Exists("$vcpkgRoot\vcpkg.exe")){
 
 # Disable telemetry
 Set-Content -Value "" -Path "$vcpkgRoot\vcpkg.disable-metrics" -Force
+
+# Bootstrap vcpkg
+Set-Location -Path "$vcpkgRoot"
+cmd.exe /c "$vcpkgRoot\bootstrap-vcpkg.bat"
 
 # Setting VCPKG_ROOT using Set-EnvironmentVariable makes the variable only
 # available during build time. In order to make it available during the
