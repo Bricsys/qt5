@@ -287,6 +287,7 @@
 	status = addon
 [submodule "qtmqtt"]
 	depends = qtbase qtdeclarative
+	recommends = qtwebsockets
 	path = qtmqtt
 	url = ../qtmqtt.git
 	branch = dev
