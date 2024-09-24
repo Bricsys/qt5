@@ -24,7 +24,7 @@ ndkVersionLatest="r26b"
 ndkVersionDefault="$ndkVersionLatest"
 sdkBuildToolsVersion="34.0.0"
 # this is compile sdk version
-sdkApiLevel="android-34"
+sdkApiLevel="android-35"
 
 toolsSourceFile="$basePath/$toolsFile"
 
