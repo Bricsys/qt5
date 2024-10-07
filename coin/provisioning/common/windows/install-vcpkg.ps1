@@ -23,20 +23,36 @@ git.exe -C "$vcpkgRoot" checkout "tags/$vcpkgVersion"
 
 # Download vcpkg-tool, i.e., vcpkg.exe
 
-$n = Get-Content "$PSScriptRoot\..\shared\vcpkg_tool_release_tag.txt"
-$n = $n.Split('=')
-$vcpkgExeReleaseTag = $n[1]
+$releaseTagFileContent = Get-Content "$PSScriptRoot\..\shared\vcpkg_tool_release_tag.txt"
+$n = $releaseTagFileContent.Split("`n")
+$sha1key = "windows_" + $arch + "_sha1"
+foreach ($keyValue in $n) {
+    $keyValue = $keyValue.Split('=')
+    if($keyValue[0] -eq "vcpkg_tool_release_tag") {
+        $vcpkgExeReleaseTag = $keyValue[1]
+    } elseif($keyValue[0] -eq $sha1key) {
+        $vcpkgExeSHA1 = $keyValue[1]
+    }
+}
+
+if(!$vcpkgExeReleaseTag) {
+    Write-Host "Unable to read release tag from $PSScriptRoot\..\shared\vcpkg_tool_release_tag.txt"
+    Write-Host "Content:"
+    Write-Host "$releaseTagFileContent"
+    exit 1
+}
 $nonDottedReleaseTag = $vcpkgExeReleaseTag.replace('-', "")
+
+if(!$vcpkgExeSHA1) {
+    Write-Host "Unable to read vcpkg tool SHA1 from $PSScriptRoot\..\shared\vcpkg_tool_release_tag.txt"
+    Write-Host "Content:"
+    Write-Host "$releaseTagFileContent"
+    exit 1
+}
 
 $suffix = "-$arch"
 if($arch -eq "x64") {
     $suffix = ""
-}
-
-if($arch -eq "x64") {
-    $vcpkgExeSHA1 = "484373186A905E9F39FE385F4FB59F263B9FFE95"
-} elseif($arch -eq "arm64") {
-    $vcpkgExeSHA1 = "E0C4CBCD64B867CE386886806D8CA9C84610545F"
 }
 
 $vcpkgExeOfficialUrl = "https://github.com/microsoft/vcpkg-tool/releases/download/$vcpkgExeReleaseTag/vcpkg$suffix.exe"
