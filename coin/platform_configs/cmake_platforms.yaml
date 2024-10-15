@@ -235,6 +235,18 @@ Configurations:
         'NON_QTBASE_TARGET_CMAKE_ARGS= -DQT_PROTOBUF_WELL_KNOWN_TYPES_PROTO_DIR=/usr/local/include -DFFMPEG_DIR={{.Env.FFMPEG_DIR_IOS}} -DQT_DEPLOY_FFMPEG=TRUE',
     ]
 -
+    Id: 'visionos-developer-build'
+    Template: 'qtci-macos-15-arm-104'
+    Target os: 'IOS_ANY'
+    Target arch: 'arm64'
+    Compiler: 'Clang'
+    Target compiler: 'Clang'
+    Platform dependency: 'macos-universal-on-arm64'
+    Features: ['Sccache', 'DisableTests', 'UseConfigure']
+    Environment variables: [
+        'TARGET_CONFIGURE_ARGS=-developer-build -no-warnings-are-errors -nomake examples -nomake tests -platform macx-visionos-clang',
+    ]
+-
     Id: 'windows-10_22h2-mingw13'
     Template: 'qtci-windows-10_22H2-x86_64-53'
     Compiler: 'Mingw'
