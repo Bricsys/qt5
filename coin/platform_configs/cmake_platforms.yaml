@@ -19,7 +19,7 @@ Configurations:
     Id: 'ubuntu-22.04'
     Template: 'qtci-linux-Ubuntu-22.04-x86_64-51'
     Compiler: 'GCC'
-    Features: ['Sccache', 'UseConfigure', 'DoNotRunTests', 'GenerateSBOM', 'VerifySBOM']
+    Features: ['Sccache', 'UseConfigure', 'DoNotRunTests', 'GenerateSBOM', 'VerifySBOM', 'DocsGenerationV2']
     Configure arguments: '-nomake examples -release -force-debug-info -separate-debug-info -headersclean -qt-libjpeg -qt-libpng -qt-pcre -qt-harfbuzz -qt-doubleconversion -no-libudev -bundled-xcb-xinput'
     Environment variables: [
         'CMAKE_ARGS=-DOpenGL_GL_PREFERENCE=LEGACY',
@@ -310,6 +310,6 @@ Configurations:
     Id: 'documentation-warnings'
     Template: 'qtci-linux-Ubuntu-22.04-x86_64-51'
     Compiler: 'GCC'
-    Features: ['PinCores', 'Sccache', 'TestOnly', 'TestDocs', 'DoNotRunTestsButCreateTestWorkItem']
+    Features: ['PinCores', 'Sccache', 'TestOnly', 'TestDocs', 'DoNotRunTestsButCreateTestWorkItem', 'DocsGenerationV2']
     Platform dependency: 'ubuntu-22.04'
 
