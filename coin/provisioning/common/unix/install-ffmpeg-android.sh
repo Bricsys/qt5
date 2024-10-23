@@ -57,8 +57,8 @@ build_ffmpeg_android() {
     libs_prefix="_arm64-v8a"
   fi
 
-  ln -s "${openssl_libs}/libcrypto_3.so" "${openssl_libs}/libcrypto.so"
-  ln -s "${openssl_libs}/libssl_3.so" "${openssl_libs}/libssl.so"
+  ln -Ffs "${openssl_libs}/libcrypto_3.so" "${openssl_libs}/libcrypto.so"
+  ln -Ffs "${openssl_libs}/libssl_3.so" "${openssl_libs}/libssl.so"
 
   api_version=24
 
