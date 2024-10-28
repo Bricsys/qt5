@@ -4,48 +4,27 @@
 
 # This script will build and install FFmpeg static libs
 set -ex
+
+source "${BASH_SOURCE%/*}/../unix/ffmpeg-installation-utils.sh"
+
 os="$1"
-build_type="$2"
+build_type=$(get_ffmpeg_build_type "$2")
 
-if [ ! -n "$build_type" ] && [ "$build_type" != "static" ] && [ "$build_type" != "shared" ]; then
-  >&2 echo "Invalid build_type: $build_type. The shared build type will be used."
-  build_type="shared"
-fi
-
-# shellcheck source=../unix/InstallFromCompressedFileFromURL.sh
-source "${BASH_SOURCE%/*}/../unix/InstallFromCompressedFileFromURL.sh"
-# shellcheck source=../unix/SetEnvVar.sh
-source "${BASH_SOURCE%/*}/../unix/SetEnvVar.sh"
-
-version="n7.1"
-url_public="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/$version.tar.gz"
-sha1="f008a93710a7577e3f85a90f4b632cc615164712"
-url_cached="http://ci-files01-hki.ci.qt.io/input/ffmpeg/$version.tar.gz"
-ffmpeg_name="FFmpeg-$version"
-
-target_dir="$HOME"
-app_prefix=""
-ffmpeg_source_dir="$target_dir/$ffmpeg_name"
-
-if [ ! -d "$ffmpeg_source_dir" ]
-then
-   InstallFromCompressedFileFromURL "$url_cached" "$url_public" "$sha1" "$target_dir" "$app_prefix"
-fi
-
-ffmpeg_config_options=$(cat "${BASH_SOURCE%/*}/../shared/ffmpeg_config_options.txt")
-if [ "$build_type" != "static" ]; then
-  ffmpeg_config_options+=" --enable-shared --disable-static"
-fi
+ffmpeg_source_dir=$(download_ffmpeg)
+ffmpeg_name=$(basename $ffmpeg_source_dir)
+ffmpeg_config_options=$(get_ffmpeg_config_options $build_type)
 
 install_ff_nvcodec_headers() {
-  nv_codec_version="11.1" # use 11.1 to ensure compatibility with 470 nvidia drivers; might be upated to 12.0
-  nv_codec_url_public="https://github.com/FFmpeg/nv-codec-headers/archive/refs/heads/sdk/$nv_codec_version.zip"
-  nv_codec_url_cached="http://ci-files01-hki.ci.qt.io/input/ffmpeg/nv-codec-headers/nv-codec-headers-sdk-$nv_codec_version.zip"
-  nv_codec_sha1="ceb4966ab01b2e41f02074675a8ac5b331bf603e"
+  local nv_codec_version="11.1" # use 11.1 to ensure compatibility with 470 nvidia drivers; might be upated to 12.0
+  local nv_codec_url_public="https://github.com/FFmpeg/nv-codec-headers/archive/refs/heads/sdk/$nv_codec_version.zip"
+  local nv_codec_url_cached="http://ci-files01-hki.ci.qt.io/input/ffmpeg/nv-codec-headers/nv-codec-headers-sdk-$nv_codec_version.zip"
+  local nv_codec_sha1="ceb4966ab01b2e41f02074675a8ac5b331bf603e"
   #nv_codec_sha1="4f30539f8dd31945da4c3da32e66022f9ca59c08" // 12.0
-  nv_codec_dir="$target_dir/nv-codec-headers-sdk-$nv_codec_version"
-  if [ ! -d  "$nv_codec_dir" ]
-  then
+  local target_dir="$HOME"
+  local nv_codec_dir="$target_dir/nv-codec-headers-sdk-$nv_codec_version"
+
+  if [ ! -d  "$nv_codec_dir" ]; then
+    source "${BASH_SOURCE%/*}/../unix/InstallFromCompressedFileFromURL.sh"
     InstallFromCompressedFileFromURL "$nv_codec_url_cached" "$nv_codec_url_public" "$nv_codec_sha1" "$target_dir" ""
   fi
 
@@ -119,13 +98,12 @@ if [ "$os" == "linux" ]; then
 
   output_dir="$ffmpeg_source_dir/build/installed/usr/local/$ffmpeg_name"
 
-  if [ "$build_type" != "static" ]; then
+  if [ "$build_type" == "shared" ]; then
     fix_dependencies="${BASH_SOURCE%/*}/../shared/fix_ffmpeg_dependencies.sh"
     "$fix_dependencies" "$output_dir"
   fi
 
   sudo mv "$output_dir" "/usr/local"
-  SetEnvVar "FFMPEG_DIR" "/usr/local/$ffmpeg_name"
 
 elif [ "$os" == "macos" ] || [ "$os" == "macos-universal" ]; then
   brew install yasm
@@ -149,8 +127,7 @@ elif [ "$os" == "macos" ] || [ "$os" == "macos-universal" ]; then
 
     sudo "${BASH_SOURCE%/*}/../macos/makeuniversal.sh" "$arm64_install_dir" "$x86_64_install_dir"
   fi
-
-  SetEnvVar "FFMPEG_DIR" "/usr/local/$ffmpeg_name"
 fi
 
+set_ffmpeg_dir_env_var "FFMPEG_DIR" "/usr/local/$ffmpeg_name"
 
