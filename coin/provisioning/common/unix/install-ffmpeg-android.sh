@@ -4,33 +4,18 @@
 
 # This script will build and install FFmpeg shared libs
 set -ex
+
+source "${BASH_SOURCE%/*}/../unix/ffmpeg-installation-utils.sh"
+
 os="$1"
-
-# shellcheck source=../unix/InstallFromCompressedFileFromURL.sh
-source "${BASH_SOURCE%/*}/../unix/InstallFromCompressedFileFromURL.sh"
-# shellcheck source=../unix/SetEnvVar.sh
-source "${BASH_SOURCE%/*}/../unix/SetEnvVar.sh"
-
-version="n7.1"
-url_public="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/$version.tar.gz"
-sha1="f008a93710a7577e3f85a90f4b632cc615164712"
-url_cached="http://ci-files01-hki.ci.qt.io/input/ffmpeg/$version.tar.gz"
-ffmpeg_name="FFmpeg-$version"
-
+build_type=$(get_ffmpeg_build_type)
 target_dir="$HOME"
-app_prefix=""
-ffmpeg_source_dir="$target_dir/$ffmpeg_name"
-
-if [ ! -d "$ffmpeg_source_dir" ];
-then
-   InstallFromCompressedFileFromURL "$url_cached" "$url_public" "$sha1" "$target_dir" "$app_prefix"
-fi
+ffmpeg_source_dir=$(download_ffmpeg)
 
 build_ffmpeg_android() {
 
   target_arch=$1
   target_dir=$2
-  shared="${3:-no}"
 
   sudo mkdir -p "$target_dir"
 
@@ -77,11 +62,8 @@ build_ffmpeg_android() {
   ar=${toolchain_bin}/llvm-ar
   ranlib=${toolchain_bin}/llvm-ranlib
 
-  ffmpeg_config_options=$(cat "${BASH_SOURCE%/*}/../shared/ffmpeg_config_options.txt")
+  ffmpeg_config_options=$(get_ffmpeg_config_options $build_type)
   ffmpeg_config_options+=" --enable-cross-compile --target-os=android --enable-jni --enable-mediacodec --enable-openssl --enable-pthreads --enable-neon --disable-asm --disable-indev=android_camera"
-  if [[ "$shared" == "yes" ]]; then
-      ffmpeg_config_options+=" --enable-shared --disable-static"
-  fi
   ffmpeg_config_options+=" --arch=$target_arch --cpu=${target_cpu} --sysroot=${sysroot} --sysinclude=${sysroot}/usr/include/"
   ffmpeg_config_options+=" --cc=${cc} --cxx=${cxx} --ar=${ar} --ranlib=${ranlib}"
   ffmpeg_config_options+=" --extra-cflags=-I${openssl_include} --extra-ldflags=-L${openssl_libs}"
@@ -100,7 +82,7 @@ build_ffmpeg_android() {
   rm -f "${openssl_libs}/libcrypto.so"
   rm -f "${openssl_libs}/libssl.so"
 
-  if [[ "$shared" == "yes" ]]; then
+  if [[ "$build_type" == "shared" ]]; then
       fix_dependencies="${BASH_SOURCE%/*}/../shared/fix_ffmpeg_dependencies.sh"
       sudo "${fix_dependencies}" "${target_dir}" "${libs_prefix}" "no"
   fi
@@ -109,18 +91,16 @@ build_ffmpeg_android() {
 if  [ "$os" == "android-x86" ]; then
   target_arch=x86
   target_dir="/usr/local/android/ffmpeg-x86"
-
-  SetEnvVar "FFMPEG_DIR_ANDROID_X86" "$target_dir"
+  envvar="FFMPEG_DIR_ANDROID_X86"
 elif  [ "$os" == "android-x86_64" ]; then
   target_arch=x86_64
   target_dir="/usr/local/android/ffmpeg-x86_64"
-
-  SetEnvVar "FFMPEG_DIR_ANDROID_X86_64" "$target_dir"
+  envvar="FFMPEG_DIR_ANDROID_X86_64"
 elif  [ "$os" == "android-arm64" ]; then
   target_arch=arm64
   target_dir="/usr/local/android/ffmpeg-arm64"
-
-  SetEnvVar "FFMPEG_DIR_ANDROID_ARM64" "$target_dir"
+  envvar="FFMPEG_DIR_ANDROID_ARM64"
 fi
 
-build_ffmpeg_android "$target_arch" "$target_dir" "yes"
+build_ffmpeg_android "$target_arch" "$target_dir"
+set_ffmpeg_dir_env_var "$envvar" "$target_dir"
