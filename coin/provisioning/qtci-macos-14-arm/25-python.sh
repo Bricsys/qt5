@@ -19,8 +19,8 @@ SetEnvVar "PIP3_PATH" "/Users/qt/.pyenv/versions/3.9.7/bin/"
 SetEnvVar "PATH" "\$PYTHON3_PATH:\$PATH"
 
 # Provisioning during installation says:
-# 'The script sbom2doc is installed in '/home/qt/.local/bin' which is not on PATH.'
+# 'The script sbom2doc is installed in '$HOME/.local/bin' which is not on PATH.'
 # hence the explicit assignment to SBOM_PYTHON_APPS_PATH.
-SetEnvVar "SBOM_PYTHON_APPS_PATH" "/home/qt/.local/bin"
+SetEnvVar "SBOM_PYTHON_APPS_PATH" "/Users/qt/.local/bin"
 
 echo "python3 = 3.9.7" >> ~/versions.txt
