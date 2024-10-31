@@ -22,9 +22,9 @@ DownloadAndExtract () {
 
 
 # Axivion Bauhaus Suite
-sourceFile="http://ci-files01-hki.ci.qt.io/input/axivion/bauhaus-suite-7_8_0-x86_64-gnu_linux.tar.gz"
-targetFile="bauhaus-suite-7_8_0-x86_64-gnu_linux.tar.gz"
-sha1="bae1a7091ab9582822bfcd00b826e07d9b467a04"
+sourceFile="http://ci-files01-hki.ci.qt.io/input/axivion/bauhaus-suite-7_8_4-x86_64-gnu_linux.tar.gz"
+targetFile="bauhaus-suite-7_8_4-x86_64-gnu_linux.tar.gz"
+sha1="519f84237a4f55700dfb34767ba5bb342f142012"
 cd "$HOME"
 DownloadAndExtract "$sourceFile" "$sha1" "$targetFile" "$HOME"
 
@@ -36,4 +36,4 @@ cd "$HOME"
 #Axivion configuration
 cp -r "${BASH_SOURCE%/*}/../common/linux/axivion/"  "$HOME/"
 
-echo "Axivion Bauhaus Suite = 7.8.0" >> ~/versions.txt
+echo "Axivion Bauhaus Suite = 7.8.4" >> ~/versions.txt
