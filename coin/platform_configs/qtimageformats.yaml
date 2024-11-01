@@ -7,3 +7,8 @@ Include: [
     cmake_platforms_qemu_vxworks_tests_static.yaml
 ]
 Configurations: []
+Overrides:
+# Make VxWorks x86_64 tests insignificant.
+-
+    Id: 'vxworks-x86_64-tests'
+    Features: ['PinCores', 'VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
