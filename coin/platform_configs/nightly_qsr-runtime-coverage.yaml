@@ -2,10 +2,10 @@ Version: 2
 Configurations:
 
 -
-    Id: 'ubuntu-22.04-qsr-coverity'
+    Id: 'ubuntu-22.04-qsr-rt-coverity'
     Template: 'qtci-linux-Ubuntu-22.04-x86_64-51'
     Compiler: 'GCC'
-    Features: ['Sccache', 'UseConfigure', 'DoNotRunTests', 'QSR_COVERAGE', 'AllowNightlyExport', 'Packaging']
+    Features: ['Sccache', 'UseConfigure', 'DoNotRunTests', 'QSR_RT_COVERAGE', 'AllowNightlyExport', 'Packaging']
     Configure arguments: '-nomake examples -release -force-debug-info -separate-debug-info -headersclean -qt-libjpeg -qt-libpng -qt-pcre -qt-harfbuzz -qt-doubleconversion -no-libudev -bundled-xcb-xinput'
     Environment variables: [
         'CMAKE_ARGS=-DOpenGL_GL_PREFERENCE=LEGACY',
