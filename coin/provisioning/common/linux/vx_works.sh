@@ -21,12 +21,12 @@ InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder"
 SetEnvVar "VXWORKS_HOME" "/opt/vxworks"
 SetEnvVar "VXWORKS_SSH" "WindRiver@172.31.1.10"
 
-VXWORKS_BUILD_VER="26-08-2024"
+VXWORKS_BUILD_VER="07-11-2024"
 ######### VXworks toolchain #########
 # Installs to /opt/fsl_imx6_2_0_6_2_VSB
 PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_arm_vsb_${VXWORKS_BUILD_VER}.tar.gz"
 AltUrl=""
-sha1="e3c7db136e25d2ef31f5f8d2fecb10191793fdf0"
+sha1="f4745e9b84a781fe2c0a44abee189fcdf1c2c100"
 targetFolder="/opt/"
 InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
 SetEnvVar "WIND_CC_SYSROOT" "/opt/fsl_imx6_2_0_6_2_VSB"
@@ -35,21 +35,20 @@ SetEnvVar "WIND_CC_SYSROOT" "/opt/fsl_imx6_2_0_6_2_VSB"
 # Installs to /opt/fsl_imx6_2_0_6_2_VIP_QEMU
 PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_arm_vip_${VXWORKS_BUILD_VER}.tar.gz"
 AltUrl=""
-sha1="787555c2fb2571afac7c6706b8bc2ddc65effdf8"
+sha1="186d7da071005d67d898a56cf57b7bec664bb89e"
 targetFolder="/opt/"
 InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
 
-VXWORKS_BUILD_VER="11-10-2024"
 # Installs to /opt/itl_generic_skylake_VSB
 PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_intel_vsb_${VXWORKS_BUILD_VER}.tar.gz"
 AltUrl=""
-sha1="52a3d774d247aa4abb1942fa6c3ac7eaa625babe"
+sha1="d5b76b92099dff0304ab97901ff1ad683dd6153d"
 targetFolder="/opt/"
 InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
 # Installs to /opt/itl_generic_skylake_VIP_QEMU
 PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_intel_vip_${VXWORKS_BUILD_VER}.tar.gz"
 AltUrl=""
-sha1="3dc7c2be5f5194c3cc4b9d7d0c1bc8c6c1a37c93"
+sha1="1943696ead5d13fba92a5af416bd3f599395fe24"
 targetFolder="/opt/"
 InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
 
