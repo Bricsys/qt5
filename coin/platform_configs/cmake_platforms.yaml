@@ -280,7 +280,7 @@ Configurations:
     Compiler: 'GCC'
     Features: ['Packaging','DebianPackaging','DisableTests', 'Insignificant']
     Environment variables: [
-        'DEBIAN_RULES_REF=6.8_dev',
+        'DEBIAN_RULES_REF=6.9_dev',
         'COIN_TARGET_DIST=tqtc-jammy',
         'COIN_EXTRA_DEBIAN_PACKAGES={{.Env.HOME}}/debian_packages/',
         'COIN_SBUILD_CHROOT=jammy-arm64-sbuild',
@@ -293,7 +293,7 @@ Configurations:
     Compiler: 'GCC'
     Features: ['Packaging','DebianPackaging','DisableTests', 'Insignificant']
     Environment variables: [
-        'DEBIAN_RULES_REF=6.8_dev',
+        'DEBIAN_RULES_REF=6.9_dev',
         'COIN_TARGET_DIST=tqtc-jammy',
         'COIN_EXTRA_DEBIAN_PACKAGES={{.Env.HOME}}/debian_packages/',
         'COIN_SBUILD_CHROOT=jammy-amd64-sbuild',
