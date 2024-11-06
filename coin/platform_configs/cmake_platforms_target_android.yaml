@@ -65,7 +65,7 @@ Configurations:
     ]
 -
     Id: 'android-15-x86_64-on-linux'
-    Template: 'qtci-linux-RHEL-8.10-x86_64-50'
+    Template: 'qtci-linux-RHEL-8.10-x86_64-51'
     Target os: 'Android_ANY'
     Target arch: 'x86_64'
     Compiler: 'GCC'
