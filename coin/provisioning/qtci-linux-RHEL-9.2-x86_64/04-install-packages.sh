@@ -63,6 +63,7 @@ installPackages+=(dbus-devel)
 installPackages+=(gstreamer1-plugins-bad-free)
 installPackages+=(gstreamer1-devel)
 installPackages+=(gstreamer1-plugins-base-devel)
+installPackages+=(gstreamer1-plugin-openh264)
 # pipewire for QtMultimedia
 installPackages+=(pipewire-devel)
 # yasm for QtMultimedia
