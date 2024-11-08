@@ -49,7 +49,8 @@ sudo zypper -nq install libxml2-devel libxslt-devel
 sudo zypper -nq install yasm
 
 # GStreamer (qtwebkit and qtmultimedia), pulseaudio (qtmultimedia)
-sudo zypper -nq install gstreamer-devel gstreamer-plugins-base-devel libpulse-devel pipewire-devel gstreamer-1.20-plugin-openh264
+sudo zypper -nq install gstreamer-devel gstreamer-plugins-base-devel libpulse-devel pipewire-devel \
+         gstreamer-1.20-plugin-openh264 gstreamer-plugins-bad-devel
 
 # cups
 sudo zypper -nq install cups-devel
