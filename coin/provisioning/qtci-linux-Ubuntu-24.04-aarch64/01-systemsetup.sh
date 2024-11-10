@@ -17,6 +17,8 @@ echo "Timeout for blanking the screen (0 = never)"
 gsettings set org.gnome.desktop.session idle-delay 0
 echo "Prevents screen lock when screesaver goes active."
 gsettings set org.gnome.desktop.screensaver lock-enabled false
+echo "Disable window animations."
+gsettings set org.gnome.desktop.interface enable-animations false
 echo "Set grub timeout to 0"
 sudo sed -i 's|GRUB_TIMEOUT=10|GRUB_TIMEOUT=0|g' /etc/default/grub
 sudo update-grub

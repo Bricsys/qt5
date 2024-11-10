@@ -8,6 +8,8 @@ BASEDIR=$(dirname "$0")
 # shellcheck source=../common/shared/network_test_server_ip.txt
 source "$BASEDIR/../common/shared/network_test_server_ip.txt"
 
+echo "Disable window animations."
+gsettings set org.gnome.desktop.interface enable-animations false
 echo "Set Network Test Server address to $network_test_server_ip in /etc/hosts"
 echo "$network_test_server_ip    qt-test-server qt-test-server.qt-test-net" | sudo tee -a /etc/hosts
 echo "Set DISPLAY"
