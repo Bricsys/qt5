@@ -25,6 +25,8 @@ gsettings set org.gnome.desktop.session idle-delay 0
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 # Disable windows key from showing the GNOME Shell Activities overlay
 gsettings set org.gnome.mutter overlay-key ""
+echo "Disable window animations."
+gsettings set org.gnome.desktop.interface enable-animations false
 
 # Set Wayland enable as false.
 echo "Setting Wayland enable as false"
