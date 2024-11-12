@@ -79,6 +79,9 @@ sudo zypper -nq install valgrind-devel
 # cifs-utils, for mounting smb drive
 sudo zypper -nq install cifs-utils
 
+# Java
+sudo zypper -nq install java-17-openjdk
+
 gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
 echo "GCC = $gccVersion" >> versions.txt
 
