@@ -84,6 +84,9 @@ sudo zypper -nq install cifs-utils
 # For Firebird in RTA
 sudo zypper -nq install libtommath-devel
 
+# Java
+sudo zypper -nq install java-17-openjdk
+
 gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
 echo "GCC = $gccVersion" >> versions.txt
 
