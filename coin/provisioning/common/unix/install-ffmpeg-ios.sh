@@ -68,7 +68,7 @@ build_ffmpeg_ios() {
   --enable-pthreads \
   --disable-audiotoolbox
 
-  sudo make install DESTDIR="$build_dir/installed" -j
+  sudo make install DESTDIR="$build_dir/installed" -j4
   popd
 }
 
