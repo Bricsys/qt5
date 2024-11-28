@@ -6,8 +6,3 @@ Include: [
     address_sanitizer_platforms.yaml
     ]
 Configurations: []
-Overrides:
-# Make VxWorks arm tests insignificant.
--
-    Id: 'vxworks-imx6-tests'
-    Features: ['PinCores', 'VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
