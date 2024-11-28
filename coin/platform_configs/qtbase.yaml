@@ -16,8 +16,5 @@ Configurations: []
 Overrides:
 # Make VxWorks tests insignificant.
 -
-    Id: 'vxworks-imx6-tests'
-    Features: ['PinCores', 'VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
--
     Id: 'vxworks-x86_64-tests'
     Features: ['PinCores', 'VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
