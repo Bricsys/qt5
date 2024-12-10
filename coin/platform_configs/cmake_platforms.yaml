@@ -122,7 +122,7 @@ Configurations:
     Id: 'opensuse-15.6-developer-build'
     Template: 'qtci-linux-openSUSE-15.6-x86_64-51'
     Compiler: 'GCC'
-    Features: ['PinCores', 'Sccache', 'WarningsAreErrors', 'UseConfigure', 'InsignificantTests']
+    Features: ['PinCores', 'Sccache', 'WarningsAreErrors', 'UseConfigure']
     Configure arguments: '-nomake examples -developer-build'
     Environment variables: [
         'PATH={{.Env.CMAKE_MIN_SUPPORTED_BIN_PATH}}:{{.Env.PATH}}',
