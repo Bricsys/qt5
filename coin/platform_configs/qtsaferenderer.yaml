@@ -8,7 +8,6 @@ Include: [
   cmake_platforms.yaml: [
     "ubuntu-22.04",
     "ubuntu-22.04-developer-build",
-    "opensuse-15.5-developer-build",
     "opensuse-15.6-developer-build",
     "sles-15_sp5-static",
     "sles-15_sp6-static",
