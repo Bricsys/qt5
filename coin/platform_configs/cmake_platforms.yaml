@@ -163,7 +163,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_23H2-msvc2022'
-    Template: 'qtci-windows-11_23H2-x86_64-53'
+    Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'MSVC2022'
     Features: ['PinCores', 'Sccache', "DebugAndRelease", 'UseConfigure', 'Packaging', 'GenerateSBOM', 'VerifySBOM']
     Configure arguments: '-debug-and-release -force-debug-info -headersclean -nomake examples -qt-zlib'
@@ -186,7 +186,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_23H2-msvc2022-arm64'
-    Template: 'qtci-windows-11_23H2-x86_64-53'
+    Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'MSVC2022'
     Target arch: 'arm64'
     Features: ['Sccache', 'DisableTests', 'TargetBuildOnly', 'Packaging', 'UseConfigure', 'GenerateSBOM', 'VerifySBOM']
@@ -202,7 +202,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_23H2-msvc2022-developer-build'
-    Template: 'qtci-windows-11_23H2-x86_64-53'
+    Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'MSVC2022'
     Features: ['PinCores', 'Sccache', 'DebugAndRelease', 'WarningsAreErrors', 'UseConfigure', 'StandaloneExamples']
     Configure arguments: '-debug-and-release -force-asserts -make examples -developer-build -force-debug-info -qt-zlib -c++std c++20'
@@ -260,7 +260,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_23H2-llvm'
-    Template: 'qtci-windows-11_23H2-x86_64-53'
+    Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'Clang'
     Features: ['PinCores', 'Packaging','Sccache', 'UseConfigure', 'GenerateSBOM', 'VerifySBOM']
     Configure arguments: '-release -force-debug-info -separate-debug-info -nomake examples'
@@ -273,7 +273,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_23H2-mingw13-developer-build'
-    Template: 'qtci-windows-11_23H2-x86_64-53'
+    Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'Mingw'
     Features: ['PinCores', 'Sccache', 'WarningsAreErrors', 'UseConfigure', 'StandaloneExamples']
     Configure arguments: '-developer-build -release -force-asserts -force-debug-info -separate-debug-info -make examples'
