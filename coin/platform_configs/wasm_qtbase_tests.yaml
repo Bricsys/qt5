@@ -12,5 +12,5 @@ Configurations:
     Template: 'qtci-linux-openSUSE-15.6-x86_64-51'
     Target os: 'WebAssembly'
     Compiler: 'GCC'
-    Features: ['Sccache', 'TestOnly']
+    Features: ['PinCores', 'Sccache', 'TestOnly']
     Platform dependency: 'webassembly-linux-thread-asyncify-openSUSE-15.6'
