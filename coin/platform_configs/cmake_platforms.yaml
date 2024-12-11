@@ -175,7 +175,7 @@ Configurations:
     ]
 -
     Id: 'windows-11_22h2-arm64-msvc2022'
-    Template: 'qtci-windows-11_22H2-aarch64-54'
+    Template: 'qtci-windows-11_22H2-aarch64-55'
     Compiler: 'MSVC2022'
     Features: ['PinCores', 'Packaging', 'DebugAndRelease', 'UseConfigure', 'GenerateSBOM', 'VerifySBOM']
     Configure arguments: '-debug-and-release -force-debug-info -headersclean -nomake examples -qt-zlib -no-opengl -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-psql -no-sql-mimer'
