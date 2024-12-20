@@ -86,7 +86,6 @@ installPackages+=(libXtst-devel)
 installPackages+=(libxshmfence-devel)
 installPackages+=(nspr-devel)
 installPackages+=(nss-devel)
-installPackages+=(python3-html5lib)
 installPackages+=(libatomic)
 installPackages+=(mesa-libgbm-devel-21.3.4-1.el8.x86_64)
 # For Android builds
@@ -167,7 +166,7 @@ sudo pip config --user set global.index https://ci-files01-hki.ci.qt.io/input/py
 sudo pip config --user set global.extra-index-url https://pypi.org/simple/
 
 sudo pip3 install virtualenv wheel
-sudo python3.11 -m pip install virtualenv wheel
+sudo python3.11 -m pip install virtualenv wheel html5lib
 sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/sbom_requirements.txt"
 # For now we don't set QT_SBOM_PYTHON_APPS_PATH here, and rely on the build system to find the
 # system python3.11.
