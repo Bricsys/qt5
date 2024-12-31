@@ -14,7 +14,8 @@ Include: [
         'android-armv7-on-windows',
         'android-9-x86-on-linux',
         'android-14-x86_64-on-linux'
-    ]
+    ],
+    offline_documentation.yaml
 ]
 Configurations:
 -
