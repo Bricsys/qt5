@@ -87,6 +87,9 @@ sudo zypper -nq install libtommath-devel
 # Java
 sudo zypper -nq install java-17-openjdk
 
+# For tst_license.pl with all the machines generating SBOM
+sudo zypper -nq install perl-JSON
+
 gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
 echo "GCC = $gccVersion" >> versions.txt
 
