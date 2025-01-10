@@ -168,5 +168,8 @@ sudo /usr/bin/pip3 install wheel
 # Make FindPython3.cmake to find python3
 sudo ln -s /usr/bin/python3 /usr/local/bin/python3
 
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
+
 OpenSSLVersion="$(openssl version |cut -b 9-14)"
 echo "OpenSSL = $OpenSSLVersion" >> ~/versions.txt
