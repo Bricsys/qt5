@@ -176,6 +176,9 @@ sudo python3.11 -m pip install -r "${BASH_SOURCE%/*}/../common/shared/sbom_requi
 sudo /usr/bin/pip3 install wheel
 sudo /usr/bin/pip3 install dataclasses
 
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
+
 OpenSSLVersion="$(openssl3 version |cut -b 9-14)"
 echo "System's OpenSSL = $OpenSSLVersion" >> ~/versions.txt
 
