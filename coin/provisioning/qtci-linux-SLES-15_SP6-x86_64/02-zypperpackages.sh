@@ -116,7 +116,7 @@ sudo zypper -nq install libtommath-devel
 # For tst_license.pl with all the machines generating SBOM
 sudo zypper -nq install perl-JSON
 
-gccVersion="$(gcc --version |grep gcc |cut -b 17-23)"
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
 echo "GCC = $gccVersion" >> versions.txt
 
 OpenSSLVersion="$(openssl version |cut -b 9-14)"

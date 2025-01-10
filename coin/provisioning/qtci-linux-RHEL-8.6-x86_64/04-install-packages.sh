@@ -162,5 +162,8 @@ sudo python3.8 -m pip install virtualenv wheel
 sudo /usr/bin/pip3 install wheel
 sudo /usr/bin/pip3 install dataclasses
 
+gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
+echo "GCC = $gccVersion" >> versions.txt
+
 OpenSSLVersion="$(openssl3 version |cut -b 9-14)"
 echo "OpenSSL = $OpenSSLVersion" >> ~/versions.txt
