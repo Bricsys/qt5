@@ -93,5 +93,5 @@ sudo zypper -nq install perl-JSON
 gccVersion="$(gcc --version |grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' |head -n 1)"
 echo "GCC = $gccVersion" >> versions.txt
 
-OpenSSLVersion="$(openssl-3 version |cut -b 9-14)"
+OpenSSLVersion="$(openssl version |cut -b 9-14)"
 echo "System's OpenSSL = $OpenSSLVersion" >> ~/versions.txt
