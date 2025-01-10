@@ -5,3 +5,8 @@
 set -ex
 
 defaults write com.apple.CrashReporter DialogType server
+
+# shellcheck source=../common/unix/SetEnvVar.sh
+source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
+
+SetEnvVar "SWIFT_BACKTRACE" "enable=yes,output-to=stderr,preset=medium,interactive=false"
