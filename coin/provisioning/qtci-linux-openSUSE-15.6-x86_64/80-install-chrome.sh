@@ -10,14 +10,14 @@ source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
 # shellcheck source=../common/unix/DownloadURL.sh
 source "${BASH_SOURCE%/*}/../common/unix/DownloadURL.sh"
 
-chromeVersion="chrome-for-testing-115"
-sha="7242ece1055bdbf503527f8e87c4b5da37c3c60e"
-chromeUrl="https://ci-files01-hki.ci.qt.io/input/wasm/chrome/${chromeVersion}.tar.gz"
-target="/tmp/chrome-for-testing-115.tar.gz"
+chromeVersion="chrome-for-testing-131"
+sha="006d8e0438980d5ca8809af6f036e2b802b13cc8"
+cachedChromeUrl="https://ci-files01-hki.ci.qt.io/input/wasm/chrome/${chromeVersion}.zip"
+officialChromeUrl="https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.204/linux64/chrome-linux64.zip"
+target="/tmp/${chromeVersion}.zip"
 
-DownloadURL "$chromeUrl" "" "$sha" "$target"
-sudo tar -xzf "$target" -C "${HOME}"
+DownloadURL "$cachedChromeUrl" "$officialChromeUrl" "$sha" "$target"
+sudo unzip -q "$target" -d "${HOME}"
 sudo rm -f "$target"
-
-SetEnvVar "BROWSER_FOR_WASM" "${HOME}/${chromeVersion}/chrome"
-SetEnvVar "CHROMEDRIVER_PATH" "${HOME}/${chromeVersion}/chromedriver"
+chromePath="${HOME}/chrome-linux64/chrome"
+SetEnvVar "BROWSER_FOR_WASM" "${chromePath}"

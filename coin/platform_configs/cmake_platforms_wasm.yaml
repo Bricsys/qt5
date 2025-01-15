@@ -10,7 +10,8 @@ Configurations:
     Environment variables: [
         'EM_CONFIG={{.Env.EMSDK}}/.emscripten',
         "TARGET_CONFIGURE_ARGS=-release -platform wasm-emscripten -nomake examples -feature-thread \
-         -feature-exceptions -DQT_QMAKE_DEVICE_OPTIONS=\"QT_EMSCRIPTEN_ASYNCIFY=1\""
+         -feature-exceptions -DQT_QMAKE_DEVICE_OPTIONS=\"QT_EMSCRIPTEN_ASYNCIFY=1\"",
+        'HEADLESS_CHROME_FOR_TESTING=true'
     ]
 -
     Id: 'webassembly-windows'
