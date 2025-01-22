@@ -5,7 +5,7 @@ Configurations:
     Id: 'ubuntu-22.04-axivion'
     Template: 'qtci-linux-Ubuntu-22.04-x86_64-50'
     Compiler: 'GCC'
-    Features: ['Axivion', 'DisableTests', 'UseConfigure', 'VMSize8']
+    Features: ['Axivion', 'DisableTests', 'UseConfigure', 'VMSize16']
     Configure arguments: '-nomake examples -release -force-debug-info -separate-debug-info -headersclean -qt-libjpeg -qt-libpng -qt-pcre -qt-harfbuzz -qt-doubleconversion -no-libudev -bundled-xcb-xinput'
     Environment variables: [
         'CMAKE_ARGS=-DOpenGL_GL_PREFERENCE=LEGACY',
