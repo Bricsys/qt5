@@ -14,13 +14,11 @@ source "${BASH_SOURCE%/*}/../common/unix/SetEnvVar.sh"
 
 echo "Set timezone to UTC."
 sudo timedatectl set-timezone Etc/UTC
-echo "Timeout for blanking the screen (0 = never)"
-gsettings set org.gnome.desktop.session idle-delay 0
-echo "Prevents screen lock when screesaver goes active."
-gsettings set org.gnome.desktop.screensaver lock-enabled false
-gsettings set org.gnome.desktop.lockdown disable-lock-screen 'true'
-echo "Disable window animations."
-gsettings set org.gnome.desktop.interface enable-animations false
+
+"$BASEDIR/../common/linux/configure-gnome-shell.sh"
+
+echo "Disable windows key from showing the GNOME Shell Activities overlay"
+gsettings set org.gnome.mutter overlay-key ""
 
 sudo sed -i 's|GRUB_TIMEOUT=8|GRUB_TIMEOUT=0|g' /etc/default/grub
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
