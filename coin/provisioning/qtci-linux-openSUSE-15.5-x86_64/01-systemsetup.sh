@@ -14,11 +14,11 @@ sudo btrfs quota disable /
 
 sed -i '$ a\[Daemon\]\nAutolock=false\nLockOnResume=false' ~/.config/kscreenlockerrc
 
+"$BASEDIR/../common/linux/configure-gnome-shell.sh"
+
 sudo sed -i 's|GRUB_TIMEOUT=8|GRUB_TIMEOUT=0|g' /etc/default/grub
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
-echo "Disable window animations."
-gsettings set org.gnome.desktop.interface enable-animations false
 echo "Set Network Test Server address to $network_test_server_ip in /etc/hosts"
 echo "$network_test_server_ip    qt-test-server qt-test-server.qt-test-net" | sudo tee -a /etc/hosts
 echo "Set DISPLAY"

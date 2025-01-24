@@ -8,8 +8,6 @@ BASEDIR=$(dirname "$0")
 # shellcheck source=../common/shared/network_test_server_ip.txt
 source "$BASEDIR/../common/shared/network_test_server_ip.txt"
 
-echo "Disable window animations."
-gsettings set org.gnome.desktop.interface enable-animations false
 echo "Set Network Test Server address to $network_test_server_ip in /etc/hosts"
 echo "$network_test_server_ip    qt-test-server qt-test-server.qt-test-net" | sudo tee -a /etc/hosts
 echo "Set DISPLAY"
@@ -19,10 +17,8 @@ export DISPLAY=:0
 
 # Set timezone to UTC.
 sudo timedatectl set-timezone Etc/UTC
-# disable Automatic screen lock
-gsettings set org.gnome.desktop.screensaver lock-enabled false
-# disable blank screen power saving
-gsettings set org.gnome.desktop.session idle-delay 0
+
+"$BASEDIR/../common/linux/configure-gnome-shell.sh"
 
 # Set Wayland enable as false.
 echo "Setting Wayland enable as false"
