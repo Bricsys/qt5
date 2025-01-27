@@ -7,7 +7,7 @@ Include: [
         'ubuntu-22.04-developer-build-x11-tests'
     ],
     macos.yaml: [
-        'macos-universal-on-x86_64'
+        'macos-universal-on-arm64'
     ],
     cmake_platforms_target_android.yaml: [
         'android-arm64-on-macos',

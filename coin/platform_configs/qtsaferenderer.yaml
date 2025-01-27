@@ -1,7 +1,7 @@
 Version: 2
 Include: [
   macos.yaml: [
-     "macos-universal-on-x86_64",
+     "macos-universal-on-arm64",
      "macos-14-x86_64-tests",
      "macos-14-arm64-tests"
   ],
