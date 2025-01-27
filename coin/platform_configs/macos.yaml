@@ -17,7 +17,6 @@ Configurations:
         Environment variables: [
             'CMAKE_ARGS=-DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DPostgreSQL_ROOT={{.Env.POSTGRESQLBINPATH}}/.. -DOPENSSL_ROOT_DIR={{.Env.OPENSSL_DIR}}',
             'NON_QTBASE_CMAKE_ARGS=-DFEATURE_gds=OFF -DFFMPEG_DIR={{.Env.FFMPEG_DIR}} -DQT_DEPLOY_FFMPEG=TRUE -DINPUT_headersclean=ON -DQT_FEATURE_open62541_security=OFF',
-            'Protobuf_ROOT=/usr/local/lib/cmake/protobuf'
         ]
 
     -
@@ -29,7 +28,6 @@ Configurations:
         Configure arguments: '-nomake examples -release -force-debug-info -separate-debug-info -headersclean -framework'
         Environment variables: [
             'CMAKE_ARGS=-DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"',
-            'Protobuf_ROOT=/usr/local/lib/cmake/protobuf',
             'NON_QTBASE_CMAKE_ARGS=-DFFMPEG_DIR={{.Env.FFMPEG_DIR}} -DQT_DEPLOY_FFMPEG=TRUE -DINPUT_headersclean=ON',
         ]
 
@@ -122,7 +120,6 @@ Configurations:
         Environment variables: [
             'CMAKE_ARGS=-DOPENSSL_ROOT_DIR={{.Env.OPENSSL_DIR}}',
             'NON_QTBASE_CMAKE_ARGS=-DFFMPEG_DIR={{.Env.FFMPEG_DIR}} -DQT_DEPLOY_FFMPEG=TRUE',
-            'Protobuf_ROOT=/usr/local/lib/cmake/protobuf',
         ]
     -
         Id: 'macos-14-arm64-developer-build'
@@ -132,7 +129,6 @@ Configurations:
         Configure arguments: '-developer-build -nomake examples -debug -framework'
         Environment variables: [
             'CMAKE_ARGS=-DOPENSSL_ROOT_DIR={{.Env.OPENSSL_DIR}}',
-            'Protobuf_ROOT=/usr/local/lib/cmake/protobuf',
             'NON_QTBASE_CMAKE_ARGS=-DFFMPEG_DIR={{.Env.FFMPEG_DIR}} -DQT_DEPLOY_FFMPEG=TRUE',
         ]
 

@@ -53,6 +53,5 @@ Configurations:
     Configure arguments: '-make examples -debug -force-debug-info -separate-debug-info -headersclean -framework'
     Environment variables: [
         'CMAKE_ARGS=-DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"',
-        'Protobuf_ROOT=/usr/local/lib/cmake/protobuf',
         'NON_QTBASE_CMAKE_ARGS=-DFFMPEG_DIR={{.Env.FFMPEG_DIR}} -DQT_DEPLOY_FFMPEG=TRUE -DINPUT_headersclean=ON -DQT_UNITY_BUILD=ON',
     ]
