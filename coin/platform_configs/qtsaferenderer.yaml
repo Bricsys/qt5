@@ -2,8 +2,8 @@ Version: 2
 Include: [
   macos.yaml: [
      "macos-universal-on-x86_64",
-     "macos-12-x86_64-tests",
-     "macos-12-arm-on-arm64-tests"
+     "macos-14-x86_64-tests",
+     "macos-14-arm64-tests"
   ],
   cmake_platforms.yaml: [
     "ubuntu-22.04",
@@ -27,8 +27,8 @@ Include: [
 # Static build configurations for tools
 Configurations:
 -
-    Id: 'macOS-12-latest-xcode-universal_Static'
-    Template: 'qtci-macos-12-x86_64-107'
+    Id: 'macos-latest-x code-universal-static-build'
+    Template: 'qtci-macos-14-arm-106'
     Compiler: 'Clang'
     Target arch: 'x86_64-arm64'
     Features: ['Packaging', 'Sccache', 'UseConfigure', 'MinimalStaticTests']
