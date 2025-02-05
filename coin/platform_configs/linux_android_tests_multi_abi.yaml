@@ -13,7 +13,6 @@ Configurations:
         'android-15-x86_64-on-linux'
     ]
     Features: [
-        'PinCores',
         'Sccache',
         'WarningsAreErrors',
         'AndroidTestRun',
