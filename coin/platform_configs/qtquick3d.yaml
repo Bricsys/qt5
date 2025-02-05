@@ -12,4 +12,4 @@ Overrides:
 # Make VxWorks x86_64 tests insignificant.
 -
     Id: 'vxworks-x86_64-tests'
-    Features: ['PinCores', 'VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
+    Features: ['VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
