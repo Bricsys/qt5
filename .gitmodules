@@ -200,7 +200,7 @@
 	path = qtdatavis3d
 	url = ../qtdatavis3d.git
 	branch = dev
-	status = addon
+	status = deprecated
 [submodule "qtvirtualkeyboard"]
 	depends = qtbase qtdeclarative qtsvg
 	recommends = qtmultimedia
