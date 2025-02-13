@@ -193,7 +193,7 @@
 	path = qtcharts
 	url = ../qtcharts.git
 	branch = dev
-	status = addon
+	status = deprecated
 [submodule "qtdatavis3d"]
 	depends = qtbase
 	recommends = qtdeclarative qtmultimedia
