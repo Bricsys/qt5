@@ -12,5 +12,8 @@ Overrides:
     Id: 'vxworks-imx6-tests'
     Features: ['VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']
 -
+    Id: 'vxworks-imx8-buildtest'
+    Features: ['VMSize8', 'UseConfigure', 'DoNotRunTests', 'DoNotUploadTests', 'Insignificant']
+-
     Id: 'vxworks-x86_64-tests'
     Features: ['VMSize8', 'UseConfigure', 'BuildTestsInTest', 'TestOnly', 'InsignificantTests']

@@ -21,6 +21,7 @@ InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder"
 SetEnvVar "VXWORKS_HOME" "/opt/vxworks"
 SetEnvVar "VXWORKS_SSH" "WindRiver@172.31.1.10"
 
+# IMX 6
 VXWORKS_BUILD_VER="07-11-2024"
 ######### VXworks toolchain #########
 # Installs to /opt/fsl_imx6_2_0_6_2_VSB
@@ -36,6 +37,15 @@ SetEnvVar "WIND_CC_SYSROOT" "/opt/fsl_imx6_2_0_6_2_VSB"
 PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_arm_vip_${VXWORKS_BUILD_VER}.tar.gz"
 AltUrl=""
 sha1="186d7da071005d67d898a56cf57b7bec664bb89e"
+targetFolder="/opt/"
+InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
+
+# IMX 8
+VXWORKS_BUILD_VER="03-03-2025"
+# Installs to /opt/nxp_imx8_1_0_6_3_VSB
+PrimaryUrl="http://ci-files01-hki.ci.qt.io/input/vxworks/vxworks_arm_imx8_vsb_${VXWORKS_BUILD_VER}.tar.gz"
+AltUrl=""
+sha1="d7afe3f57748b87f6ea8932f079c18e67a58f30e"
 targetFolder="/opt/"
 InstallFromCompressedFileFromURL "$PrimaryUrl" "$AltUrl" "$sha1" "$targetFolder" ""
 

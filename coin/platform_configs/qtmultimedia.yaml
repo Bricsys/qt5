@@ -6,3 +6,8 @@ Include: [
     address_sanitizer_platforms.yaml
     ]
 Configurations: []
+Overrides:
+# Make VxWorks imx8 insignificant.
+-
+    Id: 'vxworks-imx8-buildtest'
+    Features: ['VMSize8', 'UseConfigure', 'DoNotRunTests', 'DoNotUploadTests', 'Insignificant']
