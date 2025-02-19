@@ -62,7 +62,6 @@ build_ffmpeg_ios() {
     --nm="$(xcrun --sdk ${target_sdk} --find nm)" \
     --target-os=darwin \
     --extra-ldflags="$minos" \
-    --enable-cross-compile \
     --enable-shared \
     --disable-static \
     --install-name-dir='@rpath' \
@@ -188,7 +187,7 @@ create_xcframework() {
 build_ffmpeg_ios "arm64-simulator"
 build_ffmpeg_ios "arm64"
 
-ffmpeg_libs="libavcodec libavdevice libavfilter libavformat libavutil libswresample libswscale"
+ffmpeg_libs="libavcodec libavformat libavutil libswresample libswscale"
 
 for name in $ffmpeg_libs; do
     create_framework $name "arm64"
