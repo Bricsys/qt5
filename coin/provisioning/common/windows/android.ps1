@@ -10,9 +10,9 @@
 # That's why we need to use Andoid-21 API version in Qt 5.9.
 
 # NDK
-$ndkVersionLatest = "r26b"
+$ndkVersionLatest = "r27c"
 $ndkVersionDefault = $ndkVersionLatest
-$ndkChecksumLatest = "17453c61a59e848cffb8634f2c7b322417f1732e"
+$ndkChecksumLatest = "ac5f7762764b1f15341094e148ad4f847d050c38"
 $ndkChecksumDefault = $ndkChecksumLatest
 $ndkCachedUrlLatest = "\\ci-files01-hki.ci.qt.io\provisioning\android\android-ndk-$ndkVersionLatest-windows.zip"
 $ndkOfficialUrlLatest = "https://dl.google.com/android/repository/android-ndk-$ndkVersionLatest-windows.zip"
