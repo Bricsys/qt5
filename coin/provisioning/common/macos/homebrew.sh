@@ -33,7 +33,7 @@ installPkg() {
 
     sudo installer -pkg "/tmp/Homebrew-$VERSION.pkg" -target /
     # Add homebrew to PATH
-    SetEnvVar "PATH" "/opt/homebrew/bin:$PATH"
+    SetEnvVar "PATH" "/opt/homebrew/bin:\$PATH"
 
     echo "Homebrew = $VERSION" >> ~/versions.txt
 }
