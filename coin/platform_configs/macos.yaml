@@ -51,7 +51,7 @@ Configurations:
         Id: 'macos-15-x86_64-tests'
         Template: 'qtci-macos-15-x86_64-103'
         Compiler: 'Clang'
-        Features: ['Sccache', 'TestOnly', 'Packaging', 'InsignificantTests']
+        Features: ['Sccache', 'TestOnly', 'Packaging']
         Platform dependency: 'macos-universal-on-x86_64'
 
     # And arm64
@@ -72,7 +72,7 @@ Configurations:
         Id: 'macos-15-arm64-tests'
         Template: 'qtci-macos-15-arm-104'
         Compiler: 'Clang'
-        Features: ['TestOnly', 'Packaging', 'InsignificantTests']
+        Features: ['TestOnly', 'Packaging']
         Platform dependency: 'macos-universal-on-x86_64'
 
     # Test the universal packaging built on arm64
