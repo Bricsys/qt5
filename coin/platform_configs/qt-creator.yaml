@@ -9,6 +9,13 @@ Configurations:
     Environment variables: []
     Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
 -
+    Template: 'qtci-windows-11_24H2-x86_64-71'
+    Compiler: 'MSVC2022'
+    Features: ['Sccache', 'DebugAndRelease', 'InsignificantTests']
+    Configure arguments: ''
+    Environment variables: []
+    Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
+-
     Template: 'qtci-linux-RHEL-8.10-x86_64-51'
     Compiler: 'GCC'
     Features: ['Sccache', 'DebugAndRelease']
@@ -34,11 +41,25 @@ Configurations:
     Configure arguments: ''
     Environment variables: []
     Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
+-
+    Template: 'qtci-windows-11_24H2-x86_64-71'
+    Compiler: 'MSVC2022'
+    Features: ['Sccache', 'DebugAndRelease', 'DisableTests']
+    Configure arguments: ''
+    Environment variables: []
+    Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
 # oldest Qt version
 -
     Template: 'qtci-windows-11_23H2-x86_64-54'
     Compiler: 'MSVC2022'
     Features: ['Sccache', 'DebugAndRelease', 'OldestQt']
+    Configure arguments: ''
+    Environment variables: []
+    Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
+-
+    Template: 'qtci-windows-11_24H2-x86_64-71'
+    Compiler: 'MSVC2022'
+    Features: ['Sccache', 'DebugAndRelease', 'OldestQt', 'InsignificantTests']
     Configure arguments: ''
     Environment variables: []
     Environment script: ['%ProgramFiles%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat', 'amd64']
