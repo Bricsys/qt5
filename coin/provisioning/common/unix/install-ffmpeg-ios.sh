@@ -19,6 +19,7 @@ ffmpeg_name="FFmpeg-$version"
 target_dir="$HOME"
 ffmpeg_source_dir="$target_dir/$ffmpeg_name"
 prefix="/usr/local/ios/ffmpeg"
+dylib_regex="^@rpath/.*\.dylib$"
 
 if [ ! -d "$ffmpeg_source_dir" ];
 then
