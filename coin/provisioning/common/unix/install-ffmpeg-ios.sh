@@ -40,17 +40,11 @@ build_ffmpeg_ios() {
     --arch=$target_platform \
     --cc="xcrun --sdk ${target_sdk} clang -arch $target_platform" \
     --cxx="xcrun --sdk ${target_sdk} clang++ -arch $target_platform" \
-    --ar="$(xcrun --sdk ${target_sdk} --find ar)" \
-    --ranlib="$(xcrun --sdk ${target_sdk} --find ranlib)" \
-    --strip="$(xcrun --sdk ${target_sdk} --find strip)" \
-    --nm="$(xcrun --sdk ${target_sdk} --find nm)" \
     --target-os=darwin \
     --extra-ldflags="$minos" \
     --enable-shared \
     --disable-static \
     --install-name-dir='@rpath' \
-    --enable-swscale \
-    --enable-pthreads \
     --disable-audiotoolbox
 
     sudo make install DESTDIR="$build_dir/installed" -j4
