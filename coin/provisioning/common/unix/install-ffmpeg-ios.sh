@@ -18,11 +18,17 @@ build_ffmpeg_ios() {
         target_sdk="iphonesimulator"
         target_platform="arm64"
         minos="-mios-simulator-version-min=16.0"
-    else
+    elif [ "$target_platform" == "x86_64-simulator" ]; then
+        target_sdk="iphonesimulator"
+        target_platform="x86_64"
+        minos="-mios-simulator-version-min=16.0"
+    elif [ "$target_platform" == "arm64-iphoneos" ]; then
         target_sdk="iphoneos"
         target_platform="arm64"
         minos="-miphoneos-version-min=16.0"
-    # TODO: consider non-arm simulator?
+    else
+        echo "Error when building FFmpeg for iOS. Unknown parameter given for target_platform: '${target_platform}'"
+        exit 1
     fi
 
     # Note: unlike similar install-ffmpeg scripts, not $target_platform,
@@ -87,6 +93,8 @@ build_info_plist() {
     local minimum_os_version="16.0"
     local supported_platforms="iPhoneOS"
 
+    # TODO: This should be filled out with the actual version of FFmpeg that we are
+    # deploying.
     info_plist="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -154,29 +162,31 @@ create_xcframework() {
     # Create 'traditional' framework from the corresponding dylib,
     # also creating
     local framework_name="$1"
+    local target_platform_a="$2"
+    local target_platform_b="$3"
 
-    local fw1="$ffmpeg_source_dir/build_ios/arm64/installed/usr/local/ios/ffmpeg/framework/${framework_name}.framework"
-    local fw2="$ffmpeg_source_dir/build_ios/arm64-simulator/installed/usr/local/ios/ffmpeg/framework/${framework_name}.framework"
+    local fw_a="$ffmpeg_source_dir/build_ios/${target_platform_a}/installed/usr/local/ios/ffmpeg/framework/${framework_name}.framework"
+    local fw_b="$ffmpeg_source_dir/build_ios/${target_platform_b}/installed/usr/local/ios/ffmpeg/framework/${framework_name}.framework"
 
     sudo mkdir -p "$prefix/framework/"
-    sudo xcodebuild -create-xcframework -framework $fw1 -framework $fw2 -output "${prefix}/framework/${framework_name}.xcframework"
+    sudo xcodebuild -create-xcframework -framework $fw_a -framework $fw_b -output "${prefix}/framework/${framework_name}.xcframework"
 }
 
-build_ffmpeg_ios "arm64-simulator"
-build_ffmpeg_ios "arm64"
+build_ffmpeg_ios "x86_64-simulator"
+build_ffmpeg_ios "arm64-iphoneos"
 
 ffmpeg_libs="libavcodec libavformat libavutil libswresample libswscale"
 
 for name in $ffmpeg_libs; do
-    create_framework $name "arm64"
-    create_framework $name "arm64-simulator"
+    create_framework $name "arm64-iphoneos"
+    create_framework $name "x86_64-simulator"
 done
 
 # Create corresponding (xc)frameworks containing both arm64 and arm64-simulator frameworks:
 for name in $ffmpeg_libs; do
-    create_xcframework $name
+    create_xcframework $name "arm64-iphoneos" "x86_64-simulator"
 done
 
-install_ffmpeg "$ffmpeg_source_dir/build_ios/arm64/installed"
+install_ffmpeg "$ffmpeg_source_dir/build_ios/arm64-iphoneos/installed"
 
 set_ffmpeg_dir_env_var "FFMPEG_DIR_IOS" $prefix
