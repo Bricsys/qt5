@@ -8,6 +8,8 @@ set -ex
 source "${BASH_SOURCE%/*}/../unix/ffmpeg-installation-utils.sh"
 
 os="$1"
+# Optional parameter to set output installation directory. Useful for local builds.
+target_install_dir_param="$2"
 build_type=$(get_ffmpeg_build_type)
 ffmpeg_source_dir=$(download_ffmpeg)
 
@@ -107,6 +109,11 @@ elif  [ "$os" == "android-arm64" ]; then
 else
     >&2 echo "Unhandled android os param: $os"
     exit 1
+fi
+
+# If parameter is set, use it as the target output directory.
+if [ ! -z $target_install_dir_param ]; then
+  target_dir=$target_install_dir_param
 fi
 
 build_ffmpeg_android "$target_arch" "$target_dir"
