@@ -1,3 +1,4 @@
+\+ git config --get initrepository.initialized
 \+ git submodule init qtshadertools qtsvg qtactiveqt qttools
 Submodule 'qtactiveqt' \(https://code.qt.io/qt/qtactiveqt.git\) registered for path 'qtactiveqt'
 Submodule 'qttools' \(https://code.qt.io/qt/qttools.git\) registered for path 'qttools'
@@ -34,8 +35,8 @@ Cloning into 'src/assistant/qlitehtml'...
 \+ git submodule update --force --no-fetch
 Submodule path 'src/assistant/qlitehtml': checked out '[0-9a-zA-Z]+'
 \+ git submodule init src/3rdparty/litehtml
-Submodule 'src/3rdparty/litehtml' \(https://github.com/litehtml/litehtml.git\) registered for path 'src/3rdparty/litehtml'
-\+ git clone --no-checkout https://github.com/litehtml/litehtml.git src/3rdparty/litehtml
+Submodule 'src/3rdparty/litehtml' \(.+litehtml.git\) registered for path 'src/3rdparty/litehtml'
+\+ git clone --no-checkout .+litehtml.git src/3rdparty/litehtml
 Cloning into 'src/3rdparty/litehtml'...
 \+ git submodule update --force --no-fetch
 Submodule path 'src/3rdparty/litehtml': checked out '[0-9a-zA-Z]+'
