@@ -8,5 +8,5 @@ enable_testing()
 include("${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake")
 
 add_RunCMake_test(InitRepository
-    -DCMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}
+    -DEXTRA_MODULE_PATH=${CMAKE_CURRENT_SOURCE_DIR}
 )

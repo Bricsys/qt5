@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.16)
-include("${CMAKE_CURRENT_SOURCE_DIR}/../Common.cmake")
+
+list(APPEND CMAKE_MODULE_PATH "${EXTRA_MODULE_PATH}")
+include(Common)
 
 # The file is included separately from Common.cmake because it has side-effects
 # that we want to apply only in the RunCMake part of the test.
-include(QtIRRunCMake)
+include(RunCMake)
 
 # Uses prefix set from outside scope.
 function(run_suite_command name)
