@@ -14,26 +14,25 @@ dylib_regex="^@rpath/.*\.dylib$"
 
 build_ffmpeg_ios() {
     local target_platform=$1
+    local target_cpu_arch=""
     if [ "$target_platform" == "arm64-simulator" ]; then
         target_sdk="iphonesimulator"
-        target_platform="arm64"
+        target_cpu_arch="arm64"
         minos="-mios-simulator-version-min=16.0"
     elif [ "$target_platform" == "x86_64-simulator" ]; then
         target_sdk="iphonesimulator"
-        target_platform="x86_64"
+        target_cpu_arch="x86_64"
         minos="-mios-simulator-version-min=16.0"
     elif [ "$target_platform" == "arm64-iphoneos" ]; then
         target_sdk="iphoneos"
-        target_platform="arm64"
+        target_cpu_arch="arm64"
         minos="-miphoneos-version-min=16.0"
     else
         echo "Error when building FFmpeg for iOS. Unknown parameter given for target_platform: '${target_platform}'"
         exit 1
     fi
 
-    # Note: unlike similar install-ffmpeg scripts, not $target_platform,
-    # but $1 (which can be arm64-simulator with arm64 target_platform).
-    local build_dir="$ffmpeg_source_dir/build_ios/$1"
+    local build_dir="$ffmpeg_source_dir/build_ios/$target_platform"
     sudo mkdir -p "$build_dir"
     pushd "$build_dir"
 
@@ -43,9 +42,9 @@ build_ffmpeg_ios() {
     --enable-cross-compile \
     --enable-optimizations \
     --prefix=$prefix \
-    --arch=$target_platform \
-    --cc="xcrun --sdk ${target_sdk} clang -arch $target_platform" \
-    --cxx="xcrun --sdk ${target_sdk} clang++ -arch $target_platform" \
+    --arch=$target_cpu_arch \
+    --cc="xcrun --sdk ${target_sdk} clang -arch $target_cpu_arch" \
+    --cxx="xcrun --sdk ${target_sdk} clang++ -arch $target_cpu_arch" \
     --target-os=darwin \
     --extra-ldflags="$minos" \
     --enable-shared \
