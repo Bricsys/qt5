@@ -12,7 +12,19 @@ include(RunCMake)
 
 # Uses prefix set from outside scope.
 function(run_suite_command name)
-    run_cmake_command(${prefix}_${name} ${ARGN})
+    set(RunCMake_TEST_COMMAND "${ARGN}")
+    set(RunCMake-check-file "check.cmake")
+
+    set(args ${ARGN})
+    list(JOIN args " " args_str)
+    set(working_dir "${RunCMake_TEST_COMMAND_WORKING_DIRECTORY}")
+    message(STATUS "Running command: '${args_str}' in dir: '${working_dir}'")
+
+    run_cmake("${prefix}${name}")
+    # set by the check file above.
+    if(should_error_out)
+        message(FATAL_ERROR "Command ${prefix}${name} failed. Exiting early.")
+    endif()
 endfunction()
 
 macro(read_expected_output test file_name)
