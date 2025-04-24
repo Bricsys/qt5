@@ -95,6 +95,7 @@ def main():
     parser.add_argument('--qt_version', required='True', help='Build type: release, debug')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
+    parser.add_argument('--action', default='all', help='Do only one action, useful for scripting: all, checkout, generate, build')
     parser.add_argument('--cmake_generator', default='Ninja', help='The CMake Generator to use')
     parser.add_argument('--build_type', default='release', help='Build type: release, debug')
     parser.add_argument('--qt_src_dir', default='qt/src', help='Qt source directory (default: qt/src)')
@@ -109,6 +110,7 @@ def main():
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
     QT_VERSION = args.qt_version
+    ACTION = args.action
 
     if args.build_type == "debug":
         BUILD_TYPE = '-debug'
@@ -124,6 +126,7 @@ def main():
     print(f"==============================================")
     print(f"Running script with the following config:")
     print(f"QT VERSION: {QT_VERSION}")
+    print(f"ACTION: {ACTION}")
     print(f"CMAKE GENERATOR: {CMAKE_GENERATOR}")
     print(f"PLATFORM: {PLATFORM}")
     print(f"BUILD TYPE: {BUILD_TYPE}")
@@ -132,7 +135,7 @@ def main():
     print(f"BUILD DIR: {BUILD_DIR}")
     print(f"INSTALL DIR: {INSTALL_DIR}")
     print(f"QTWEBENGINE BIN DIR: {QTWEBENGINE_BIN_DIR}")
-    print(f"==============================================")
+    print(f"==============================================", flush=True)
 
     # Prepare environment variables for subprocesses
     env = os.environ.copy()
@@ -143,21 +146,23 @@ def main():
     INSTALL_DIR.mkdir(parents=True, exist_ok=True)
 
     # Clone the Qt repository if the source directory is empty
-    if not any(SRC_DIR.iterdir()):
-        run_command(
-            f'git clone --branch {QT_VERSION} {QT_REPO_URL} .',
-            cwd=SRC_DIR,
-            env=env
-        )
-    else:
-        print(f"Source directory is not empty. Skip repo cloning.")
+    if ACTION == all:
+      if not any(SRC_DIR.iterdir()):
+          run_command(
+              f'git clone --branch {QT_VERSION} {QT_REPO_URL} .',
+              cwd=SRC_DIR,
+              env=env
+          )
+      else:
+          print(f"Source directory is not empty. Skip repo cloning.")
 
     CMAKE_SOURCE_PATH = SRC_DIR
 
     if PLATFORM == "mac":
         suppress_xcode_check(CMAKE_SOURCE_PATH)
 
-    initialize_and_update_submodules(CMAKE_SOURCE_PATH, SUBMODULES, BUILD_DIR, env)
+    if ACTION == "checkout" or ACTION == "generate" or ACTION == "all":
+        initialize_and_update_submodules(CMAKE_SOURCE_PATH, SUBMODULES, BUILD_DIR, env)
 
     # Configure the build
     configure_command = (
@@ -174,20 +179,22 @@ def main():
     elif PLATFORM == "windows":
         configure_command += f' -platform win32-msvc'
 
-    run_command(configure_command, cwd=BUILD_DIR, env=env)
+    if ACTION == "generate" or ACTION == "all":
+        run_command(configure_command, cwd=BUILD_DIR, env=env)
 
     # Build Qt
-    start = time.time()
-    run_command('cmake --build . --parallel', cwd=BUILD_DIR, env=env)
-    interval = time.time() - start
-    print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
+    if ACTION == "build" or ACTION == "all":
+        start = time.time()
+        run_command('cmake --build . --parallel', cwd=BUILD_DIR, env=env)
+        interval = time.time() - start
+        print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
 
-    # Install Qt
-    run_command('cmake --install .', cwd=BUILD_DIR, env=env)
+        # Install Qt
+        run_command('cmake --install .', cwd=BUILD_DIR, env=env)
 
-    print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
-    copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
-    print(f"Copying QtWebEngine files... Done.")    
+        print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
+        copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
+        print(f"Copying QtWebEngine files... Done.")    
 
 if __name__ == '__main__':
     start = time.time()
