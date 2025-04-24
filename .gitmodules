@@ -34,7 +34,7 @@
 	recommends = qtdeclarative qtactiveqt
 	path = qttools
 	url = ../qttools.git
-	branch = 6.8.2
+	branch = bricsys_6.8.2
 	status = essential
 [submodule "qtxmlpatterns"]
 	depends = qtbase
