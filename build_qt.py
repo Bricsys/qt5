@@ -58,6 +58,9 @@ def initialize_and_update_submodules(cmake_source_path, submodules, cwd, env):
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
     for item in src_dir.iterdir():
+        # Check if any part of the path is '.svn'
+        if '.svn' in item.parts:
+            continue
         s = item
         d = dest_dir / item.name
         if item.is_dir():
