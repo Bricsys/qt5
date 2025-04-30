@@ -40,6 +40,7 @@ import argparse
 import sys
 import time
 import math
+from enum import IntFlag
 
 def run_command(command, cwd=None, env=None):
     """Run a shell command and handle errors."""
@@ -90,12 +91,24 @@ def suppress_xcode_check(cmake_source_path):
     except Exception as e:
         print(f"Error modifying {file_path}: {e}")
 
+class Action(IntFlag):
+    NONE = 0
+    CHECKOUT = 1 << 0
+    GENERATE = 1 << 1
+    BUILD = 1 << 2
+    INSTALL = 1 << 3
+    ALL = CHECKOUT | GENERATE | BUILD | INSTALL
+
 def main():
     parser = argparse.ArgumentParser(description='Build Qt from source.')
     parser.add_argument('--qt_version', required='True', help='Build type: release, debug')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
-    parser.add_argument('--action', default='all', help='Do only one action, useful for scripting: all, checkout, generate, build')
+    parser.add_argument(
+        '--action',
+        default='all',
+        help='Comma-separated actions: checkout, generate, build, install, all'
+    )
     parser.add_argument('--cmake_generator', default='Ninja', help='The CMake Generator to use')
     parser.add_argument('--build_type', default='release', help='Build type: release, debug')
     parser.add_argument('--qt_src_dir', default='qt/src', help='Qt source directory (default: qt/src)')
@@ -110,12 +123,15 @@ def main():
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
     QT_VERSION = args.qt_version
-    ACTION = args.action
 
+    # Build type
     if args.build_type == "debug":
         BUILD_TYPE = '-debug'
     elif args.build_type == "release":
         BUILD_TYPE = '-release'
+    else:
+        print(f"Unknown build type: {args.build_type}")
+        sys.exit(1)
 
     # Paths
     SRC_DIR = Path(args.qt_src_dir).resolve()
@@ -123,10 +139,32 @@ def main():
     INSTALL_DIR = Path(args.qt_install_dir).resolve()
     QTWEBENGINE_BIN_DIR = Path(args.qtwebengine_bin_dir).resolve()
 
+    # Parse actions
+    action_str = args.action.lower()
+    ACTION = Action.NONE
+
+    if action_str == 'all':
+        ACTION = Action.ALL
+    else:
+        actions = action_str.split(',')
+        for act in actions:
+            act = act.strip()
+            if act == 'checkout':
+                ACTION |= Action.CHECKOUT
+            elif act == 'generate':
+                ACTION |= Action.GENERATE
+            elif act == 'build':
+                ACTION |= Action.BUILD
+            elif act == 'install':
+                ACTION |= Action.INSTALL
+            else:
+                print(f"Unknown action: {act}")
+                sys.exit(1)
+
     print(f"==============================================")
     print(f"Running script with the following config:")
     print(f"QT VERSION: {QT_VERSION}")
-    print(f"ACTION: {ACTION}")
+    print(f"ACTION: {args.action}")
     print(f"CMAKE GENERATOR: {CMAKE_GENERATOR}")
     print(f"PLATFORM: {PLATFORM}")
     print(f"BUILD TYPE: {BUILD_TYPE}")
@@ -146,7 +184,8 @@ def main():
     INSTALL_DIR.mkdir(parents=True, exist_ok=True)
 
     # Clone the Qt repository if the source directory is empty
-    if ACTION == all:
+    # When building from BuildTool this is already done by checking out the repository
+    if Action.CHECKOUT in ACTION:
       if not any(SRC_DIR.iterdir()):
           run_command(
               f'git clone --branch {QT_VERSION} {QT_REPO_URL} .',
@@ -154,14 +193,15 @@ def main():
               env=env
           )
       else:
-          print(f"Source directory is not empty. Skip repo cloning.")
+          print(f"Source directory is not empty. Skipping repository cloning.")
 
     CMAKE_SOURCE_PATH = SRC_DIR
 
     if PLATFORM == "mac":
         suppress_xcode_check(CMAKE_SOURCE_PATH)
 
-    if ACTION == "checkout" or ACTION == "generate" or ACTION == "all":
+    # Initialize and update submodules
+    if Action.CHECKOUT in ACTION or Action.GENERATE in ACTION:
         initialize_and_update_submodules(CMAKE_SOURCE_PATH, SUBMODULES, BUILD_DIR, env)
 
     # Configure the build
@@ -179,19 +219,19 @@ def main():
     elif PLATFORM == "windows":
         configure_command += f' -platform win32-msvc'
 
-    if ACTION == "generate" or ACTION == "all":
+    if Action.GENERATE in ACTION:
         run_command(configure_command, cwd=BUILD_DIR, env=env)
 
     # Build Qt
-    if ACTION == "build" or ACTION == "all":
+    if Action.BUILD in ACTION:
         start = time.time()
         run_command('cmake --build . --parallel', cwd=BUILD_DIR, env=env)
         interval = time.time() - start
         print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
 
-        # Install Qt
+    # Install Qt
+    if Action.INSTALL in ACTION:
         run_command('cmake --install .', cwd=BUILD_DIR, env=env)
-
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
