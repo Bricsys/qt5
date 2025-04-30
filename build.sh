@@ -5,37 +5,35 @@ BUILD_TYPE="release"
 ACTION_TYPE="build"
 
 # Parse command line arguments
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    debug)
-      BUILD_TYPE="debug"
+if [ "$1" == "debug" ]; then
+  BUILD_TYPE="debug"
+elif [ "$1" == "release" ]; then
+  BUILD_TYPE="release"
+fi
+
+if [ "$2" == "generate" ]; then
+  ACTION_TYPE="generate"
+elif [ "$2" == "build" ]; then
+  ACTION_TYPE="build"
+elif [ "$2" == "checkout" ]; then
+  ACTION_TYPE="checkout"
+fi
+
+# Set CMakeExeFolder from the third parameter, or default based on platform
+if [ -n "$3" ]; then
+  CMakeExeFolder="$3"
+else
+  case $OSTYPE in
+    darwin*)
+      Platform=mac
+      CMakeExeFolder="${THIRDPARTY_PATH}/cmake/mac/bin"
       ;;
-    release)
-      BUILD_TYPE="release"
-      ;;
-    generate)
-      ACTION_TYPE="generate"
-      ;;
-    build)
-      ACTION_TYPE="build"
-      ;;
-    checkout)
-      ACTION_TYPE="checkout"
+    *)
+      Platform=linux
+      CMakeExeFolder="${THIRDPARTY_PATH}/cmake/lin64/bin"
       ;;
   esac
-  shift
-done
-
-case $OSTYPE in
-  darwin*)
-    Platform=mac
-    CMakeExeFolder=${THIRDPARTY_PATH}/cmake/mac/bin
-  ;;  
-  *) 
-    Platform=linux
-    CMakeExeFolder=${THIRDPARTY_PATH}/cmake/lin64/bin
-  ;;  
-esac
+fi
 
 export PATH=$PATH:$CMakeExeFolder
 
