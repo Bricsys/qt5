@@ -96,8 +96,7 @@ class Action(IntFlag):
     CHECKOUT = 1 << 0
     GENERATE = 1 << 1
     BUILD = 1 << 2
-    INSTALL = 1 << 3
-    ALL = CHECKOUT | GENERATE | BUILD | INSTALL
+    ALL = CHECKOUT | GENERATE | BUILD
 
 def main():
     parser = argparse.ArgumentParser(description='Build Qt from source.')
@@ -107,7 +106,7 @@ def main():
     parser.add_argument(
         '--action',
         default='all',
-        help='Comma-separated actions: checkout, generate, build, install, all'
+        help='Comma-separated actions: checkout, generate, build, all'
     )
     parser.add_argument('--cmake_generator', default='Ninja', help='The CMake Generator to use')
     parser.add_argument('--build_type', default='release', help='Build type: release, debug')
@@ -155,8 +154,6 @@ def main():
                 ACTION |= Action.GENERATE
             elif act == 'build':
                 ACTION |= Action.BUILD
-            elif act == 'install':
-                ACTION |= Action.INSTALL
             else:
                 print(f"Unknown action: {act}")
                 sys.exit(1)
@@ -229,8 +226,7 @@ def main():
         interval = time.time() - start
         print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
 
-    # Install Qt
-    if Action.INSTALL in ACTION:
+        # Install to configured prefix
         run_command('cmake --install .', cwd=BUILD_DIR, env=env)
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
