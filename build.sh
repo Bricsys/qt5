@@ -39,5 +39,5 @@ esac
 
 export PATH=$PATH:$CMakeExeFolder
 
-python3 ./build_qt.py --qt_version=6.8.2 --action="$ACTION_TYPE" --platform=$Platform --build_type="$BUILD_TYPE" --qt_src_dir="./" --qt_build_dir="./build" --qt_install_dir="./install" --qtwebengine_bin_dir="D:/Qt_OSS_6_8_2_/6.8.2/msvc2022_64"
+python3 ./build_qt.py --qt_version=6.8.2 --action="$ACTION_TYPE" --platform=$Platform --build_type="$BUILD_TYPE" --qt_src_dir="./" --qt_build_dir="./build" --qt_install_dir="./install" --qtwebengine_bin_dir="${QTWEBENGINE_PATH}"
 
