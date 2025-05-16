@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Default build type
-BUILD_TYPE="release"
+BUILD_TYPE="release_debug"
 ACTION_TYPE="build"
 
 # Parse command line arguments

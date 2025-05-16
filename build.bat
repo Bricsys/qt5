@@ -1,5 +1,5 @@
 :: Default build type
-set BUILD_TYPE=release
+set BUILD_TYPE=release_debug
 set ACTION_TYPE=build
 
 set VS_TOOLS_PATH="C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/"
