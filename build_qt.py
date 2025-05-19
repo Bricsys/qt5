@@ -29,7 +29,7 @@
 #   qt_find_package(XCB 1.11 PROVIDED_TARGETS XCB::XCB MODULE_NAME gui QMAKE_LIB xcb)
 #
 # Example for Ubuntu 22.04 (do double check with the cmake script thought, the list might not be complete):
-#   libxcb1-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-icccm4-dev libxcb-glx0-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinput-dev libxcb-cursor-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxcb-xinput-dev
+#   libxcb1-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-icccm4-dev libxcb-glx0-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinput-dev libxcb-cursor-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxkbcommon-x11-dev
 #
 
 import os
