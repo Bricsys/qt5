@@ -1,1 +1,1 @@
-./build.sh release generate
+./build.sh release_debug generate
