@@ -6,6 +6,7 @@ CMakeLists.txt.user*
 CMakeUserPresets.json
 .vscode
 build
+build_*
 build-*
 install
 .DS_Store
