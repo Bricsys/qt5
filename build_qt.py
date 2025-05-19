@@ -70,6 +70,12 @@ def copy_with_overwrite(src_dir, dest_dir):
         else:
             shutil.copy2(s, d)
 
+def copy_license_file(src_dir, dest_dir):
+    """Copy contents of src_dir to dest_dir, overwriting existing files."""
+    for item in src_dir.iterdir():
+        if item.is_file() and item.name == 'LICENSE.LGPLv3':
+            shutil.copy2(item, dest_dir)
+
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
         command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput '
@@ -259,6 +265,9 @@ def main():
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
+
+        BIN_DIR = INSTALL_DIR / 'bin' 
+        copy_license_file(SRC_DIR, BIN_DIR)
 
 if __name__ == '__main__':
     start = time.time()
