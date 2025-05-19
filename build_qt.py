@@ -44,13 +44,15 @@ from enum import IntFlag
 
 def run_command(command, cwd=None, env=None):
     """Run a shell command and handle errors."""
-    print(f"Running command: {command} (in {cwd})")
+    print(f"Running command: {command} (in {cwd})", flush=True)
     result = subprocess.run(command, shell=True, cwd=cwd, env=env)
     result.check_returncode()
 
-def initialize_and_update_submodules(cmake_source_path, submodules, cwd, env):
+def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, cwd, env):
+    command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
+
     run_command(
-        f'"{cmake_source_path / "configure"}" -init-submodules -submodules {submodules}',
+        command_text,
         cwd=cwd,
         env=env
     )
@@ -67,6 +69,21 @@ def copy_with_overwrite(src_dir, dest_dir):
             shutil.copytree(s, d, dirs_exist_ok=True)
         else:
             shutil.copy2(s, d)
+
+def copy_license_file(src_dir, dest_dir):
+    """Copy contents of src_dir to dest_dir, overwriting existing files."""
+    for item in src_dir.iterdir():
+        if item.is_file() and item.name == 'LICENSE.LGPLv3':
+            shutil.copy2(item, dest_dir)
+
+def run_configure_command(command=None, platform="windows", cwd=None, env=None):
+    if platform == "linux":
+        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput '
+    elif platform == "windows":
+        command += f' -platform win32-msvc'
+
+    run_command(command, cwd=cwd, env=env)
+
 
 def suppress_xcode_check(cmake_source_path):
     try:
@@ -103,7 +120,7 @@ class Action(IntFlag):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Qt from source.')
-    parser.add_argument('--qt_version', required='True', help='Build type: release, debug')
+    parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.8.2')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
     parser.add_argument(
@@ -112,7 +129,7 @@ def main():
         help='Comma-separated actions: checkout, generate, build, all'
     )
     parser.add_argument('--cmake_generator', default='Ninja', help='The CMake Generator to use')
-    parser.add_argument('--build_type', default='release', help='Build type: release, debug')
+    parser.add_argument('--build_type', default='release_debug', help='Build type: release, debug, release_debug')
     parser.add_argument('--qt_src_dir', default='qt/src', help='Qt source directory (default: qt/src)')
     parser.add_argument('--qt_build_dir', default='qt/build', help='Qt build directory (default: qt/build)')
     parser.add_argument('--qt_install_dir', default='qt/install', help='Qt install directory (default: qt/install)')
@@ -131,6 +148,8 @@ def main():
         BUILD_TYPE = '-debug'
     elif args.build_type == "release":
         BUILD_TYPE = '-release'
+    elif args.build_type == "release_debug":
+        BUILD_TYPE = '-debug-and-release'
     else:
         print(f"Unknown build type: {args.build_type}")
         sys.exit(1)
@@ -182,6 +201,7 @@ def main():
     SRC_DIR.mkdir(parents=True, exist_ok=True)
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
     INSTALL_DIR.mkdir(parents=True, exist_ok=True)
+    BUILD_DIR_DEBUG=Path(args.qt_build_dir+'_debug').resolve()
 
     # Clone the Qt repository if the source directory is empty
     # When building from BuildTool this is already done by checking out the repository
@@ -202,7 +222,7 @@ def main():
 
     # Initialize and update submodules
     if Action.CHECKOUT in ACTION or Action.GENERATE in ACTION:
-        initialize_and_update_submodules(CMAKE_SOURCE_PATH, SUBMODULES, BUILD_DIR, env)
+        initialize_and_update_submodules(CMAKE_SOURCE_PATH, CMAKE_GENERATOR, SUBMODULES, BUILD_DIR, env)
 
     # Configure the build
     configure_command = (
@@ -211,29 +231,43 @@ def main():
         f'-nomake examples -nomake tests '
         f'-cmake-generator {CMAKE_GENERATOR} '
         f'-prefix "{INSTALL_DIR}" '
-        f'{BUILD_TYPE}'
     )
 
-    if PLATFORM == "linux":
-        configure_command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput '
-    elif PLATFORM == "windows":
-        configure_command += f' -platform win32-msvc'
-
     if Action.GENERATE in ACTION:
-        run_command(configure_command, cwd=BUILD_DIR, env=env)
+        if BUILD_TYPE != '-debug-and-release':
+            run_configure_command(command=configure_command+f'{BUILD_TYPE}',
+                              platform=PLATFORM, cwd=BUILD_DIR, env=env) 
+        else:
+            # at config step from Build Tool, we want to do both debug and release
+            CURR_BUILD_TYPE='-release'
+            run_configure_command(command=configure_command+f'{CURR_BUILD_TYPE}',
+                              platform=PLATFORM, cwd=BUILD_DIR, env=env) 
+
+            CURR_BUILD_TYPE='-debug'
+            CURR_BUILD_DIR=BUILD_DIR_DEBUG
+            CURR_BUILD_DIR.mkdir(parents=True, exist_ok=True)
+            run_configure_command(command=configure_command+f'{CURR_BUILD_TYPE}',
+                              platform=PLATFORM, cwd=CURR_BUILD_DIR, env=env) 
 
     # Build Qt
     if Action.BUILD in ACTION:
         start = time.time()
-        run_command('cmake --build . --parallel', cwd=BUILD_DIR, env=env)
+        build_command = f'cmake --build . --parallel '
+        CURR_BUILD_DIR=BUILD_DIR
+        if BUILD_TYPE == '-debug': # we build to a different folder, but install to ./install
+            CURR_BUILD_DIR=BUILD_DIR_DEBUG
+        run_command(build_command, cwd=CURR_BUILD_DIR, env=env)
         interval = time.time() - start
         print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
 
         # Install to configured prefix
-        run_command('cmake --install .', cwd=BUILD_DIR, env=env)
+        run_command('cmake --install .', cwd=CURR_BUILD_DIR, env=env)
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
+
+        BIN_DIR = INSTALL_DIR / 'bin' 
+        copy_license_file(SRC_DIR, BIN_DIR)
 
 if __name__ == '__main__':
     start = time.time()
