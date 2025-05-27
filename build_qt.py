@@ -267,7 +267,7 @@ def main():
         print(f"Copying QtWebEngine files... Done.")    
 
         BIN_DIR = INSTALL_DIR / 'bin' 
-        copy_file(SRC_DIR / 'bcad', INSTALL_DIR, 'LICENSE.LGPLv3')
+        copy_file(SRC_DIR / 'bcad', BIN_DIR, 'LICENSE.LGPLv3')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'linuxdeployqt')
 
 if __name__ == '__main__':
