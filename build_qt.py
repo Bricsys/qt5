@@ -137,7 +137,7 @@ def main():
 
     # Configurable Constants
     QT_REPO_URL = 'git@github.com:HEXAGON-GEO/qt5.git'
-    SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning'
+    SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning,qtscxml'
     SKIP_MODULES = 'qtwebengine'
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
