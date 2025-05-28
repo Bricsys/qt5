@@ -14,7 +14,7 @@
 	recommends = qtimageformats qtshadertools qtsvg qtlanguageserver
 	path = qtdeclarative
 	url = ../qtdeclarative.git
-	branch = 6.8.2
+	branch = bricsys_6.8.2
 	status = essential
 [submodule "qtactiveqt"]
 	depends = qtbase
