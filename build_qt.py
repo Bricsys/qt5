@@ -269,6 +269,7 @@ def main():
         BIN_DIR = INSTALL_DIR / 'bin' 
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'LICENSE.LGPLv3')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'linuxdeployqt')
+        copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patchelf')
 
 if __name__ == '__main__':
     start = time.time()
