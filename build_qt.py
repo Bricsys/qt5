@@ -234,6 +234,9 @@ def main():
         f'-prefix "{INSTALL_DIR}" '
     )
 
+    if PLATFORM == "linux":
+        configure_command += f' -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # needed for QtWebEngine
+
     if Action.GENERATE in ACTION:
         if BUILD_TYPE != '-debug-and-release':
             run_configure_command(command=configure_command+f'{BUILD_TYPE}',
