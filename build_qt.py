@@ -227,6 +227,7 @@ def main():
     # Configure the build
     configure_command = (
         f'"{CMAKE_SOURCE_PATH / "configure"}" '
+        f'-force-debug-info '
         f'-skip {SKIP_MODULES} '
         f'-feature-vulkan ' # needed for QtWebEngine
         f'-nomake examples -nomake tests '
