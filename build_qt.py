@@ -227,12 +227,16 @@ def main():
     # Configure the build
     configure_command = (
         f'"{CMAKE_SOURCE_PATH / "configure"}" '
+        f'-force-debug-info '
         f'-skip {SKIP_MODULES} '
         f'-feature-vulkan ' # needed for QtWebEngine
         f'-nomake examples -nomake tests '
         f'-cmake-generator {CMAKE_GENERATOR} '
         f'-prefix "{INSTALL_DIR}" '
     )
+
+    if PLATFORM == "linux":
+        configure_command += f' -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # needed for QtWebEngine
 
     if Action.GENERATE in ACTION:
         if BUILD_TYPE != '-debug-and-release':
