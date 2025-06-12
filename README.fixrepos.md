@@ -19,3 +19,5 @@ Before the build script can be run, some git repo magic should happen. The repo 
 
 ## Run the build script
 * now build_qt.py can be run with qt_version=<branch_name>
+
+Note: git repos can be moved by doing "git clone --bare <old_url>" and "git push --mirror <new_url>" from the cloned folder.
