@@ -136,7 +136,7 @@ def main():
     args = parser.parse_args()
 
     # Configurable Constants
-    QT_REPO_URL = 'git@github.com:HEXAGON-GEO/qt5.git'
+    QT_REPO_URL = 'git@github.com:Bricsys/qt5.git'
     SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning,qtscxml'
     SKIP_MODULES = 'qtwebengine'
     PLATFORM = args.platform # windows, linux, mac
