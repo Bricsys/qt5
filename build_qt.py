@@ -138,7 +138,7 @@ def main():
     # Configurable Constants
     QT_REPO_URL = 'git@github.com:HEXAGON-GEO/qt5.git'
     SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning,qtscxml'
-    SKIP_MODULES = 'qtwebengine'
+    SKIP_MODULES = '-skip qtquick3d -skip qtwebengine'
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
     QT_VERSION = args.qt_version
@@ -228,8 +228,9 @@ def main():
     configure_command = (
         f'"{CMAKE_SOURCE_PATH / "configure"}" '
         f'-force-debug-info '
-        f'-skip {SKIP_MODULES} '
         f'-feature-vulkan ' # needed for QtWebEngine
+        f'{SKIP_MODULES} '
+        f'-no-feature-spatialaudio ' # because we skipped module QtQuick3D
         f'-nomake examples -nomake tests '
         f'-cmake-generator {CMAKE_GENERATOR} '
         f'-prefix "{INSTALL_DIR}" '
