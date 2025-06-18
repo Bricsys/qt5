@@ -4,6 +4,8 @@
 #
 #  Build instructions
 #
+#  You need to install Vulkan SDK from: https://vulkan.lunarg.com
+#
 ### Windows:
 #
 # 1. Open a CMD window.
@@ -237,7 +239,7 @@ def main():
     )
 
     if PLATFORM == "linux":
-        configure_command += f' -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # needed for QtWebEngine
+        configure_command += f' -feature-icu -qt-pcre -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # ssl is needed for QtWebEngine
 
     if Action.GENERATE in ACTION:
         if BUILD_TYPE != '-debug-and-release':
@@ -276,6 +278,13 @@ def main():
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'LICENSE.LGPLv3')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'linuxdeployqt')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patchelf')
+
+        if PLATFORM == "linux":
+            copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patch_libicudata.sh')
+            copy_file(SRC_DIR / 'bcad', BIN_DIR, 'copy_libicu_libs.sh')
+            LIB_DIR = INSTALL_DIR / 'lib'
+            run_command(f'../bin/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
+            run_command(f'../bin/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
 
 if __name__ == '__main__':
     start = time.time()
