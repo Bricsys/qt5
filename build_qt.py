@@ -240,6 +240,8 @@ def main():
 
     if PLATFORM == "linux":
         configure_command += f' -feature-icu -qt-pcre -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # ssl is needed for QtWebEngine
+        if BUILD_TYPE != '-debug':
+            configure_command += f' -separate-debug-info '
 
     if Action.GENERATE in ACTION:
         if BUILD_TYPE != '-debug-and-release':
@@ -285,6 +287,7 @@ def main():
             LIB_DIR = INSTALL_DIR / 'lib'
             run_command(f'../bin/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
             run_command(f'../bin/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
+            run_command(f'find . -name "*.debug" -delete', cwd=INSTALL_DIR, env=env)
 
 if __name__ == '__main__':
     start = time.time()
