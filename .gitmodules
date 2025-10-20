@@ -131,7 +131,7 @@
 	recommends = qtdeclarative qtshadertools qtmultimedia
 	path = qt3d
 	url = ../qt3d.git
-	branch = 6.10.2
+	branch = bricsys_6.10.2
 	status = deprecated
 [submodule "qtimageformats"]
 	depends = qtbase
