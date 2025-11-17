@@ -72,6 +72,33 @@ def copy_with_overwrite(src_dir, dest_dir):
         else:
             shutil.copy2(s, d)
 
+def copy_debug_files(src_dir, dest_dir, platform, build_type):
+    """Copy only debug files from src_dir to dest_dir, overwriting existing files."""
+    src_dir = Path(src_dir)
+    dest_dir = Path(dest_dir)
+
+    extension = '.pdb';
+    if platform == "linux":
+        extension = '.debug';
+
+    build_type_dir = build_type[1:]; # drop the dash in front
+    dest_dir = dest_dir / build_type_dir;
+
+    # Ensure the destination directory exists
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    # Recursively search for debug files in the source directory
+    for debug_file in src_dir.rglob(f"*{extension}"):
+        # Skip files in '.svn' directories
+        if '.svn' in debug_file.parts:
+            continue
+        
+        # Destination path for the debug file
+        dest_path = dest_dir / debug_file.name
+        
+        # Copy the debug file to the destination directory
+        shutil.copy2(debug_file, dest_path)
+
 def copy_file(src_dir, dest_dir, file_name):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
     for item in src_dir.iterdir():
@@ -125,6 +152,7 @@ def main():
     parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.8.2')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
+    parser.add_argument('--qtdebugfiles_dir', required=False, help='QtDebugFiles destination directory')
     parser.add_argument(
         '--action',
         default='all',
@@ -161,6 +189,7 @@ def main():
     BUILD_DIR = Path(args.qt_build_dir).resolve()
     INSTALL_DIR = Path(args.qt_install_dir).resolve()
     QTWEBENGINE_BIN_DIR = Path(args.qtwebengine_bin_dir).resolve()
+    QTDEBUGFILES_DIR = Path(args.qtdebugfiles_dir).resolve()
 
     # Parse actions
     action_str = args.action.lower()
@@ -194,6 +223,7 @@ def main():
     print(f"BUILD DIR: {BUILD_DIR}")
     print(f"INSTALL DIR: {INSTALL_DIR}")
     print(f"QTWEBENGINE BIN DIR: {QTWEBENGINE_BIN_DIR}")
+    print(f"QTDEBUGFILES BIN DIR: {QTDEBUGFILES_DIR}")
     print(f"==============================================", flush=True)
 
     # Prepare environment variables for subprocesses
@@ -275,6 +305,11 @@ def main():
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
+
+        if(QTDEBUGFILES_DIR != ''):
+            print(f"Copying debug files from {INSTALL_DIR} to {QTDEBUGFILES_DIR}")
+            copy_debug_files(INSTALL_DIR, QTDEBUGFILES_DIR, PLATFORM, BUILD_TYPE)
+            print(f"Copying debug files... Done.")    
 
         BIN_DIR = INSTALL_DIR / 'bin' 
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'LICENSE.LGPLv3')
