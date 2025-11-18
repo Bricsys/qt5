@@ -59,6 +59,14 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
         env=env
     )
 
+def get_debug_files_extension(platform):
+    if platform == "windows":
+        return '.pdb';
+    elif platform == "linux":
+        return '.debug';
+    elif platform == "mac":
+        return '.dSYM';
+
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
     for item in src_dir.iterdir():
@@ -72,11 +80,52 @@ def copy_with_overwrite(src_dir, dest_dir):
         else:
             shutil.copy2(s, d)
 
+def copy_debug_files(src_dir, dest_dir, platform, build_type):
+    """Copy only debug files from src_dir to dest_dir, overwriting existing files."""
+    src_dir = Path(src_dir)
+    dest_dir = Path(dest_dir)
+
+    extension = get_debug_files_extension(platform);
+
+    build_type_dir = build_type[1:]; # drop the dash in front
+    dest_dir = dest_dir / build_type_dir;
+
+    # Ensure the destination directory exists
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    # Recursively search for debug files in the source directory
+    for debug_file in src_dir.rglob(f"*{extension}"):
+        # Skip files in '.svn' directories
+        if '.svn' in debug_file.parts:
+            continue
+        
+        # Destination path for the debug file
+        dest_path = dest_dir / debug_file.name
+        
+        # Copy the debug file to the destination directory
+        shutil.copy2(debug_file, dest_path)
+
 def copy_file(src_dir, dest_dir, file_name):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
     for item in src_dir.iterdir():
         if item.is_file() and item.name == file_name:
             shutil.copy2(item, dest_dir)
+
+def delete_debug_files_recursive(target_dir, platform):
+    """Recursively find and delete all debug files in the target_dir and its subdirectories."""
+    print(f"Delete debug files in ${target_dir} folder recursively")
+    target_dir = Path(target_dir)
+
+    extension = get_debug_files_extension(platform);
+
+    # Recursively search for debug files in the target directory
+    for debug_file in target_dir.rglob(f"*{extension}"):
+        try:
+            debug_file.unlink()  # Delete the file
+            print(f"Deleted: {debug_file}")
+        except Exception as e:
+            print(f"Failed to delete {debug_file}: {e}")
+    print("Deleting debug files... Done.")
 
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
@@ -125,6 +174,7 @@ def main():
     parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.8.2')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
+    parser.add_argument('--qtdebugfiles_dir', required=False, help='QtDebugFiles destination directory')
     parser.add_argument(
         '--action',
         default='all',
@@ -161,6 +211,7 @@ def main():
     BUILD_DIR = Path(args.qt_build_dir).resolve()
     INSTALL_DIR = Path(args.qt_install_dir).resolve()
     QTWEBENGINE_BIN_DIR = Path(args.qtwebengine_bin_dir).resolve()
+    QTDEBUGFILES_DIR = Path(args.qtdebugfiles_dir).resolve()
 
     # Parse actions
     action_str = args.action.lower()
@@ -194,6 +245,7 @@ def main():
     print(f"BUILD DIR: {BUILD_DIR}")
     print(f"INSTALL DIR: {INSTALL_DIR}")
     print(f"QTWEBENGINE BIN DIR: {QTWEBENGINE_BIN_DIR}")
+    print(f"QTDEBUGFILES BIN DIR: {QTDEBUGFILES_DIR}")
     print(f"==============================================", flush=True)
 
     # Prepare environment variables for subprocesses
@@ -276,18 +328,24 @@ def main():
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
 
+        if(QTDEBUGFILES_DIR != ''):
+            print(f"Copying debug files from {INSTALL_DIR} to {QTDEBUGFILES_DIR}")
+            copy_debug_files(INSTALL_DIR, QTDEBUGFILES_DIR, PLATFORM, BUILD_TYPE)
+            print(f"Copying debug files... Done.")    
+
         BIN_DIR = INSTALL_DIR / 'bin' 
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'LICENSE.LGPLv3')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'linuxdeployqt')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patchelf')
 
+        delete_debug_files_recursive(INSTALL_DIR, PLATFORM) 
+
         if PLATFORM == "linux":
             copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patch_libicudata.sh')
             copy_file(SRC_DIR / 'bcad', BIN_DIR, 'copy_libicu_libs.sh')
             LIB_DIR = INSTALL_DIR / 'lib'
-            run_command(f'../bin/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
-            run_command(f'../bin/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
-            run_command(f'find . -name "*.debug" -delete', cwd=INSTALL_DIR, env=env)
+            run_command(f'{BIN_DIR}/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
+            run_command(f'{BIN_DIR}/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
 
 if __name__ == '__main__':
     start = time.time()
