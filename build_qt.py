@@ -122,7 +122,6 @@ def delete_debug_files_recursive(target_dir, platform):
     for debug_file in target_dir.rglob(f"*{extension}"):
         try:
             debug_file.unlink()  # Delete the file
-            print(f"Deleted: {debug_file}")
         except Exception as e:
             print(f"Failed to delete {debug_file}: {e}")
     print("Deleting debug files... Done.")
