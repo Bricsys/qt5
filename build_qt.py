@@ -59,6 +59,14 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
         env=env
     )
 
+def get_debug_files_extension(platform):
+    if platform == "windows":
+        return '.pdb';
+    elif platform == "linux":
+        return '.debug';
+    elif platform == "mac":
+        return '.dSYM';
+
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
     for item in src_dir.iterdir():
@@ -77,9 +85,7 @@ def copy_debug_files(src_dir, dest_dir, platform, build_type):
     src_dir = Path(src_dir)
     dest_dir = Path(dest_dir)
 
-    extension = '.pdb';
-    if platform == "linux":
-        extension = '.debug';
+    extension = get_debug_files_extension(platform);
 
     build_type_dir = build_type[1:]; # drop the dash in front
     dest_dir = dest_dir / build_type_dir;
@@ -104,6 +110,22 @@ def copy_file(src_dir, dest_dir, file_name):
     for item in src_dir.iterdir():
         if item.is_file() and item.name == file_name:
             shutil.copy2(item, dest_dir)
+
+def delete_debug_files_recursive(target_dir, platform):
+    """Recursively find and delete all debug files in the target_dir and its subdirectories."""
+    print(f"Delete debug files in ${target_dir} folder recursively")
+    target_dir = Path(target_dir)
+
+    extension = get_debug_files_extension(platform);
+
+    # Recursively search for debug files in the target directory
+    for debug_file in target_dir.rglob(f"*{extension}"):
+        try:
+            debug_file.unlink()  # Delete the file
+            print(f"Deleted: {debug_file}")
+        except Exception as e:
+            print(f"Failed to delete {debug_file}: {e}")
+    print("Deleting debug files... Done.")
 
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
@@ -316,13 +338,14 @@ def main():
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'linuxdeployqt')
         copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patchelf')
 
+        delete_debug_files_recursive(INSTALL_DIR, PLATFORM) 
+
         if PLATFORM == "linux":
             copy_file(SRC_DIR / 'bcad', BIN_DIR, 'patch_libicudata.sh')
             copy_file(SRC_DIR / 'bcad', BIN_DIR, 'copy_libicu_libs.sh')
             LIB_DIR = INSTALL_DIR / 'lib'
-            run_command(f'../bin/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
-            run_command(f'../bin/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
-            run_command(f'find . -name "*.debug" -delete', cwd=INSTALL_DIR, env=env)
+            run_command(f'{BIN_DIR}/patch_libicudata.sh libQt6Core.so.6', cwd=LIB_DIR, env=env)
+            run_command(f'{BIN_DIR}/copy_libicu_libs.sh {LIB_DIR}', cwd=LIB_DIR, env=env) # keep the order: call this after patching
 
 if __name__ == '__main__':
     start = time.time()
