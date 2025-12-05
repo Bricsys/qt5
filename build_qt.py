@@ -76,7 +76,7 @@ def copy_with_overwrite(src_dir, dest_dir):
         s = item
         d = dest_dir / item.name
         if item.is_dir():
-            shutil.copytree(s, d, dirs_exist_ok=True)
+            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=True)
         else:
             shutil.copy2(s, d)
 
@@ -103,7 +103,10 @@ def copy_debug_files(src_dir, dest_dir, platform, build_type):
         dest_path = dest_dir / debug_file.name
         
         # Copy the debug file to the destination directory
-        shutil.copy2(debug_file, dest_path)
+        if debug_file.is_dir():
+            shutil.copytree(debug_file, dest_path, dirs_exist_ok=True, symlinks=True)
+        else:
+            shutil.copy2(debug_file, dest_path)
 
 def copy_file(src_dir, dest_dir, file_name):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
@@ -121,7 +124,10 @@ def delete_debug_files_recursive(target_dir, platform):
     # Recursively search for debug files in the target directory
     for debug_file in target_dir.rglob(f"*{extension}"):
         try:
-            debug_file.unlink()  # Delete the file
+            if debug_file.is_dir():
+                shutil.rmtree(debug_file)  # Delete the directory
+            else:
+                debug_file.unlink()  # Delete the file
         except Exception as e:
             print(f"Failed to delete {debug_file}: {e}")
     print("Deleting debug files... Done.")
