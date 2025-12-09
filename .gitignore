@@ -9,6 +9,8 @@ build
 build_*
 build-*
 install
+install-*
+install_*
 .DS_Store
 init-repository.opt
 init-repository.opt.in
