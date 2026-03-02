@@ -14,7 +14,7 @@
 	recommends = qtimageformats qtshadertools qtsvg qtlanguageserver
 	path = qtdeclarative
 	url = ../qtdeclarative.git
-	branch = 6.11.2
+	branch = main
 	status = essential
 [submodule "qtactiveqt"]
 	depends = qtbase
