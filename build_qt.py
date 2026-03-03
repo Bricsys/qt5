@@ -72,6 +72,17 @@ def get_debug_files_extension(platform):
 
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
+    def _copy_function(src, dst, *, follow_symlinks=True):
+        """Custom copy function that handles symlinks and overwrites."""
+        if os.path.islink(src):
+            # Remove existing symlink/file at destination
+            if os.path.lexists(dst):
+                os.unlink(dst)
+            linkto = os.readlink(src)
+            os.symlink(linkto, dst)
+        else:
+            shutil.copy2(src, dst, follow_symlinks=follow_symlinks)
+    
     for item in src_dir.iterdir():
         # Check if any part of the path is '.svn'
         if '.svn' in item.parts:
@@ -79,9 +90,10 @@ def copy_with_overwrite(src_dir, dest_dir):
         s = item
         d = dest_dir / item.name
         if item.is_dir():
-            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=True)
+            # Use copytree with symlinks=False so copy_function handles everything
+            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=False, copy_function=_copy_function)
         else:
-            shutil.copy2(s, d)
+            _copy_function(str(s), str(d))
 
 def copy_debug_files(src_dir, dest_dir, platform, build_type):
     """Copy only debug files from src_dir to dest_dir, overwriting existing files."""
