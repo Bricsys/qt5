@@ -33,6 +33,9 @@
 # Example for Ubuntu 22.04 (do double check with the cmake script thought, the list might not be complete):
 #   libxcb1-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-icccm4-dev libxcb-glx0-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinput-dev libxcb-cursor-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxkbcommon-x11-dev libxcb-util-dev
 #
+# For Wayland support (qtwayland), additionally install:
+#   libwayland-dev libwayland-egl-backend-dev libxkbcommon-dev
+#
 
 import os
 import subprocess
@@ -134,7 +137,7 @@ def delete_debug_files_recursive(target_dir, platform):
 
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
-        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput '
+        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client '
     elif platform == "windows":
         command += f' -platform win32-msvc'
 
@@ -199,6 +202,9 @@ def main():
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
     QT_VERSION = args.qt_version
+
+    if PLATFORM == "linux":
+        SUBMODULES += ',qtwayland'
 
     # Build type
     if args.build_type == "debug":
