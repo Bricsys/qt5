@@ -54,13 +54,29 @@ def run_command(command, cwd=None, env=None):
     result.check_returncode()
 
 def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, cwd, env):
-    command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
-
-    run_command(
-        command_text,
-        cwd=cwd,
-        env=env
-    )
+    """ Check if submodules are already initialized by looking for a marker file
+        or checking if the submodules exist and have commits """
+    requested_submodules = [s.strip() for s in submodules.split(',')]
+    needs_init = False
+    
+    for submodule in requested_submodules:
+        submodule_path = cmake_source_path / submodule
+        # Check if submodule directory exists and has git content
+        if not submodule_path.exists() or not (submodule_path / '.git').exists():
+            needs_init = True
+            break
+    
+    if needs_init:
+        print("First-time setup detected. Running Qt configure with -init-submodules...")
+        command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
+    
+        run_command(
+            command_text,
+            cwd=cwd,
+            env=env
+        )
+    else:
+        print("Submodules already initialized. Skipping Qt configure -init-submodules.")
 
 def get_debug_files_extension(platform):
     if platform == "windows":
