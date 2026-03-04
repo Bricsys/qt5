@@ -33,6 +33,9 @@
 # Example for Ubuntu 22.04 (do double check with the cmake script thought, the list might not be complete):
 #   libxcb1-dev libxcb-xfixes0-dev libx11-xcb-dev libxcb-icccm4-dev libxcb-glx0-dev libxcb-image0-dev libxcb-keysyms1-dev libxcb-xinput-dev libxcb-cursor-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-randr0-dev libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev libxkbcommon-x11-dev libxcb-util-dev
 #
+# For Wayland support (qtwayland), additionally install:
+#   libwayland-dev libwayland-egl-backend-dev libxkbcommon-dev
+#
 
 import os
 import subprocess
@@ -69,6 +72,17 @@ def get_debug_files_extension(platform):
 
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
+    def _copy_function(src, dst, *, follow_symlinks=True):
+        """Custom copy function that handles symlinks and overwrites."""
+        if os.path.islink(src):
+            # Remove existing symlink/file at destination
+            if os.path.lexists(dst):
+                os.unlink(dst)
+            linkto = os.readlink(src)
+            os.symlink(linkto, dst)
+        else:
+            shutil.copy2(src, dst, follow_symlinks=follow_symlinks)
+    
     for item in src_dir.iterdir():
         # Check if any part of the path is '.svn'
         if '.svn' in item.parts:
@@ -76,9 +90,10 @@ def copy_with_overwrite(src_dir, dest_dir):
         s = item
         d = dest_dir / item.name
         if item.is_dir():
-            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=True)
+            # Use copytree with symlinks=False so copy_function handles everything
+            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=False, copy_function=_copy_function)
         else:
-            shutil.copy2(s, d)
+            _copy_function(str(s), str(d))
 
 def copy_debug_files(src_dir, dest_dir, platform, build_type):
     """Copy only debug files from src_dir to dest_dir, overwriting existing files."""
@@ -134,7 +149,7 @@ def delete_debug_files_recursive(target_dir, platform):
 
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
-        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput '
+        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client '
     elif platform == "windows":
         command += f' -platform win32-msvc'
 
@@ -199,6 +214,9 @@ def main():
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
     QT_VERSION = args.qt_version
+
+    if PLATFORM == "linux":
+        SUBMODULES += ',qtwayland'
 
     # Build type
     if args.build_type == "debug":
