@@ -370,6 +370,8 @@ def main():
         if(QTDEBUGFILES_DIR != ''):
             print(f"Copying debug files from {INSTALL_DIR} to {QTDEBUGFILES_DIR}")
             copy_debug_files(INSTALL_DIR, QTDEBUGFILES_DIR, PLATFORM, BUILD_TYPE)
+            if PLATFORM == "mac":
+                run_command(f'{SRC_DIR}/generate_debug_symbols.sh {QTDEBUGFILES_DIR} {BUILD_TYPE}', cwd=INSTALL_DIR, env=env)
             print(f"Copying debug files... Done.")    
 
         BIN_DIR = INSTALL_DIR / 'bin' 
