@@ -225,7 +225,7 @@ def main():
 
     # Configurable Constants
     QT_REPO_URL = 'git@github.com:Bricsys/qt5.git'
-    SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning,qtscxml'
+    SUBMODULES = 'qtbase,qtdeclarative,qt3d,qt5compat,qtwebchannel,qttools,qtpositioning,qtscxml,qttranslations'
     SKIP_MODULES = '-skip qtquick3d -skip qtwebengine'
     PLATFORM = args.platform # windows, linux, mac
     CMAKE_GENERATOR =  args.cmake_generator # Adjust based on your platform and compiler
