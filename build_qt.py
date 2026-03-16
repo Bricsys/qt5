@@ -362,7 +362,7 @@ def main():
         print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
 
         # Install to configured prefix
-        run_command('cmake --install .', cwd=CURR_BUILD_DIR, env=env)
+        run_command(f'cmake --install . --prefix "{INSTALL_DIR}"', cwd=CURR_BUILD_DIR, env=env)
         print(f"Copying QtWebEngine files from {QTWEBENGINE_BIN_DIR} to {INSTALL_DIR}")
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
