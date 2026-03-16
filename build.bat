@@ -20,4 +20,4 @@ set PATH=%PATH%;%VS_TOOLS_PATH%
 set PATH=%PATH%;%NINJA_PATH%
 call %VCVARSALL_PATH% amd64
 
-python .\build_qt.py --qt_version=6.8.2 --action=%ACTION_TYPE% --platform=windows --build_type=%BUILD_TYPE% --qt_src_dir=".\\" --qt_build_dir=".\\build" --qt_install_dir=".\\install" --qtwebengine_bin_dir="%QTWEBENGINE_PATH%" --qtdebugfiles_dir="%QTDEBUGFILES_PATH%"
+python .\build_qt.py --qt_version=6.10.2 --action=%ACTION_TYPE% --platform=windows --build_type=%BUILD_TYPE% --qt_src_dir=".\\" --qt_build_dir=".\\build" --qt_install_dir=".\\install" --qtwebengine_bin_dir="%QTWEBENGINE_PATH%" --qtdebugfiles_dir="%QTDEBUGFILES_PATH%"

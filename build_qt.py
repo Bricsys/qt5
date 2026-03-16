@@ -15,16 +15,16 @@
 #   call "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Auxiliary/Build/vcvarsall.bat" amd64
 # 3. Make sure QtWebEngine binaries are installed with the Qt open source installer in a folder of its own.
 # 4. Run with example command:
-#   python3 build_qt.py --qt_version=6.8.2 --platform=windows --qtwebengine_bin_dir=D:/path/to/Qt/install/folder/6.8.2/msvc
+#   python3 build_qt.py --qt_version=6.10.2 --platform=windows --qtwebengine_bin_dir=D:/path/to/Qt/install/folder/6.10.2/msvc
 #
 ### Linux:
 #
 # 1. Open a terminal.
 # 2. Setup the environment (also make sure python3 is in the PATH). Example:
-#     export PATH=$PATH:/home/alexandrub/Qt_6_8_2/Tools/CMake/bin
+#     export PATH=$PATH:/home/alexandrub/Qt_6_10_2/Tools/CMake/bin
 # 3. Make sure QtWebEngine binaries are installed with the Qt open source installer in a folder of its own.
 # 4. Run with example command:
-#   python3 build_qt.py --qt_version=6.8.2 --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_8_2_qtwebengine/6.8.2/gcc_64/
+#   python3 build_qt.py --qt_version=6.10.2 --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_10_2_qtwebengine/6.10.2/gcc_64/
 #
 # Note: building 'xcbglintegrations' can be tricky because you need many related libxcb -dev (-devel) packages installed on your distro.
 # You can look at qtbase/src/gui/configure.cmake for all that are needed. You can start with line:
@@ -207,7 +207,7 @@ class Action(IntFlag):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Qt from source.')
-    parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.8.2')
+    parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.10.2')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
     parser.add_argument('--qtdebugfiles_dir', required=False, help='QtDebugFiles destination directory')
