@@ -168,6 +168,8 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None):
         command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client '
     elif platform == "windows":
         command += f' -platform win32-msvc'
+    elif platform == "mac":
+        command += f' -- -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
 
     run_command(command, cwd=cwd, env=env)
 
