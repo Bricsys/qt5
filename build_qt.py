@@ -333,6 +333,7 @@ def main():
 
     if PLATFORM == "linux":
         configure_command += f' -feature-icu -qt-pcre -feature-openssl -feature-opensslv30 -feature-openssl-runtime ' # ssl is needed for QtWebEngine
+        configure_command += f' -zstd ' # needed for QtWebEngine (qtwebengine delegates require qt_resourceFeatureZstd)
         if BUILD_TYPE != '-debug':
             configure_command += f' -separate-debug-info '
 
