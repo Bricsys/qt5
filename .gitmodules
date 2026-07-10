@@ -1,7 +1,7 @@
 [submodule "qtbase"]
 	path = qtbase
 	url = ../qtbase.git
-	branch = bricsys_6.10.2
+	branch = main
 	status = essential
 [submodule "qtsvg"]
 	depends = qtbase
