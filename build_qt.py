@@ -4,7 +4,11 @@
 #
 #  Build instructions
 #
-#  You need to install Vulkan SDK from: https://vulkan.lunarg.com
+#  On Linux, Vulkan headers/libraries are needed for QtWebEngine. They are taken
+#  from the thirdparty repo (<thirdparty_path>/vulkan) via --thirdparty_path or the
+#  THIRDPARTY_PATH environment variable, as in build_wx.py. If neither is set,
+#  install the Vulkan SDK from https://vulkan.lunarg.com and make sure CMake can
+#  find it (e.g. via the VULKAN_SDK environment variable).
 #
 ### Windows:
 #
@@ -24,7 +28,7 @@
 #     export PATH=$PATH:/home/alexandrub/Qt_6_10_2/Tools/CMake/bin
 # 3. Make sure QtWebEngine binaries are installed with the Qt open source installer in a folder of its own.
 # 4. Run with example command:
-#   python3 build_qt.py --qt_version=6.10.2 --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_10_2_qtwebengine/6.10.2/gcc_64/
+#   python3 build_qt.py --qt_version=6.10.2 --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_10_2_qtwebengine/6.10.2/gcc_64/ --thirdparty_path=/home/alexandrub/dev2/thirdparty
 #
 # Note: building 'xcbglintegrations' can be tricky because you need many related libxcb -dev (-devel) packages installed on your distro.
 # You can look at qtbase/src/gui/configure.cmake for all that are needed. You can start with line:
@@ -163,13 +167,18 @@ def delete_debug_files_recursive(target_dir, platform):
             print(f"Failed to delete {debug_file}: {e}")
     print("Deleting debug files... Done.")
 
-def run_configure_command(command=None, platform="windows", cwd=None, env=None):
+def run_configure_command(command=None, platform="windows", cwd=None, env=None, extra_cmake_args=None):
+    cmake_args = list(extra_cmake_args or [])
+
     if platform == "linux":
         command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan'
     elif platform == "windows":
         command += f' -platform win32-msvc'
     elif platform == "mac":
-        command += f' -- -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"'
+        cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"')
+
+    if cmake_args:
+        command += ' -- ' + ' '.join(cmake_args)
 
     run_command(command, cwd=cwd, env=env)
 
@@ -223,6 +232,10 @@ def main():
     parser.add_argument('--qt_src_dir', default='qt/src', help='Qt source directory (default: qt/src)')
     parser.add_argument('--qt_build_dir', default='qt/build', help='Qt build directory (default: qt/build)')
     parser.add_argument('--qt_install_dir', default='qt/install', help='Qt install directory (default: qt/install)')
+    parser.add_argument('--thirdparty_path', default=os.environ.get('THIRDPARTY_PATH'),
+                        help='Path to the thirdparty repo, used on Linux to locate the prebuilt '
+                             'Vulkan headers/libs in <thirdparty_path>/vulkan '
+                             '(default: THIRDPARTY_PATH env var)')
     args = parser.parse_args()
 
     # Configurable Constants
@@ -253,6 +266,15 @@ def main():
     INSTALL_DIR = Path(args.qt_install_dir).resolve()
     QTWEBENGINE_BIN_DIR = Path(args.qtwebengine_bin_dir).resolve()
     QTDEBUGFILES_DIR = Path(args.qtdebugfiles_dir).resolve()
+
+    # Vulkan for QtWebEngine, taken from the thirdparty repo on Linux. Without it
+    # CMake falls back to searching for an installed Vulkan SDK.
+    THIRDPARTY_PATH = Path(args.thirdparty_path).resolve() if args.thirdparty_path else None
+    VULKAN_INCLUDE_DIR = None
+    VULKAN_LIBRARY = None
+    if THIRDPARTY_PATH and PLATFORM == "linux":
+        VULKAN_INCLUDE_DIR = THIRDPARTY_PATH / 'vulkan/include'
+        VULKAN_LIBRARY = THIRDPARTY_PATH / 'vulkan/lib/linux/libvulkan.so.1'
 
     # Parse actions
     action_str = args.action.lower()
@@ -287,6 +309,10 @@ def main():
     print(f"INSTALL DIR: {INSTALL_DIR}")
     print(f"QTWEBENGINE BIN DIR: {QTWEBENGINE_BIN_DIR}")
     print(f"QTDEBUGFILES BIN DIR: {QTDEBUGFILES_DIR}")
+    if VULKAN_INCLUDE_DIR:
+        print(f"VULKAN INCLUDE DIR: {VULKAN_INCLUDE_DIR}")
+    if VULKAN_LIBRARY:
+        print(f"VULKAN LIBRARY: {VULKAN_LIBRARY}")
     print(f"==============================================", flush=True)
 
     # Prepare environment variables for subprocesses
@@ -337,20 +363,31 @@ def main():
             configure_command += f' -separate-debug-info '
 
     if Action.GENERATE in ACTION:
+        # Qt's FindVulkan expects a VULKAN_SDK-style layout, so point CMake at the
+        # thirdparty headers and loader directly.
+        vulkan_cmake_args = []
+        if VULKAN_INCLUDE_DIR and VULKAN_LIBRARY:
+            for path in (VULKAN_INCLUDE_DIR, VULKAN_LIBRARY):
+                if not path.exists():
+                    print(f"Vulkan path not found: {path}")
+                    sys.exit(1)
+            vulkan_cmake_args = [f'-DVulkan_INCLUDE_DIR="{VULKAN_INCLUDE_DIR}"',
+                                 f'-DVulkan_LIBRARY="{VULKAN_LIBRARY}"']
+
         if BUILD_TYPE != '-debug-and-release':
             run_configure_command(command=configure_command+f'{BUILD_TYPE}',
-                              platform=PLATFORM, cwd=BUILD_DIR, env=env) 
+                              platform=PLATFORM, cwd=BUILD_DIR, env=env, extra_cmake_args=vulkan_cmake_args)
         else:
             # at config step from Build Tool, we want to do both debug and release
             CURR_BUILD_TYPE='-release'
             run_configure_command(command=configure_command+f'{CURR_BUILD_TYPE}',
-                              platform=PLATFORM, cwd=BUILD_DIR, env=env) 
+                              platform=PLATFORM, cwd=BUILD_DIR, env=env, extra_cmake_args=vulkan_cmake_args)
 
             CURR_BUILD_TYPE='-debug'
             CURR_BUILD_DIR=BUILD_DIR_DEBUG
             CURR_BUILD_DIR.mkdir(parents=True, exist_ok=True)
             run_configure_command(command=configure_command+f'{CURR_BUILD_TYPE}',
-                              platform=PLATFORM, cwd=CURR_BUILD_DIR, env=env) 
+                              platform=PLATFORM, cwd=CURR_BUILD_DIR, env=env, extra_cmake_args=vulkan_cmake_args)
 
     # Build Qt
     if Action.BUILD in ACTION:
