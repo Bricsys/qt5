@@ -165,7 +165,7 @@ def delete_debug_files_recursive(target_dir, platform):
 
 def run_configure_command(command=None, platform="windows", cwd=None, env=None):
     if platform == "linux":
-        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client '
+        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan'
     elif platform == "windows":
         command += f' -platform win32-msvc'
     elif platform == "mac":
@@ -323,7 +323,6 @@ def main():
     configure_command = (
         f'"{CMAKE_SOURCE_PATH / "configure"}" '
         f'-force-debug-info '
-        f'-feature-vulkan ' # needed for QtWebEngine
         f'{SKIP_MODULES} '
         f'-no-feature-spatialaudio ' # because we skipped module QtQuick3D
         f'-nomake examples -nomake tests '
