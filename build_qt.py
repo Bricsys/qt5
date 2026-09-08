@@ -175,7 +175,7 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
     elif platform == "windows":
         command += f' -platform win32-msvc'
     elif platform == "mac":
-        cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"')
+        cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="arm64"')
 
     if cmake_args:
         command += ' -- ' + ' '.join(cmake_args)
