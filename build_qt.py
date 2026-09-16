@@ -49,6 +49,7 @@ import argparse
 import sys
 import time
 import math
+import tempfile
 from enum import IntFlag
 
 def run_command(command, cwd=None, env=None):
@@ -58,8 +59,7 @@ def run_command(command, cwd=None, env=None):
     result.check_returncode()
 
 def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, cwd, env):
-    """ Check if submodules are already initialized by looking for a marker file
-        or checking if the submodules exist and have commits """
+    """Initialize missing submodules without configuring the actual build directory."""
     requested_submodules = [s.strip() for s in submodules.split(',')]
     needs_init = False
     
@@ -73,12 +73,15 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
     if needs_init:
         print("First-time setup detected. Running Qt configure with -init-submodules...")
         command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
-    
-        run_command(
-            command_text,
-            cwd=cwd,
-            env=env
-        )
+
+        # Qt's -init-submodules also performs a CMake configure. Keep its cache
+        # from affecting the subsequent Release or Debug configuration.
+        with tempfile.TemporaryDirectory(prefix="qt-init-submodules-", dir=cwd.parent) as init_build_dir:
+            run_command(
+                command_text,
+                cwd=init_build_dir,
+                env=env
+            )
     else:
         print("Submodules already initialized. Skipping Qt configure -init-submodules.")
 
@@ -265,7 +268,7 @@ def main():
     BUILD_DIR = Path(args.qt_build_dir).resolve()
     INSTALL_DIR = Path(args.qt_install_dir).resolve()
     QTWEBENGINE_BIN_DIR = Path(args.qtwebengine_bin_dir).resolve()
-    QTDEBUGFILES_DIR = Path(args.qtdebugfiles_dir).resolve()
+    QTDEBUGFILES_DIR = Path(args.qtdebugfiles_dir).resolve() if args.qtdebugfiles_dir else None
 
     # Vulkan for QtWebEngine, taken from the thirdparty repo on Linux. Without it
     # CMake falls back to searching for an installed Vulkan SDK.
@@ -394,8 +397,10 @@ def main():
         start = time.time()
         build_command = f'cmake --build . --parallel '
         CURR_BUILD_DIR=BUILD_DIR
+        CURR_BUILD_TYPE='-release'
         if BUILD_TYPE == '-debug': # we build to a different folder, but install to ./install
             CURR_BUILD_DIR=BUILD_DIR_DEBUG
+            CURR_BUILD_TYPE='-debug'
         run_command(build_command, cwd=CURR_BUILD_DIR, env=env)
         interval = time.time() - start
         print("compilation took", math.floor(interval / 60), "minutes and", math.floor(interval % 60), "seconds")
@@ -406,11 +411,11 @@ def main():
         copy_with_overwrite(QTWEBENGINE_BIN_DIR, INSTALL_DIR)
         print(f"Copying QtWebEngine files... Done.")    
 
-        if(QTDEBUGFILES_DIR != ''):
+        if QTDEBUGFILES_DIR is not None:
             print(f"Copying debug files from {INSTALL_DIR} to {QTDEBUGFILES_DIR}")
-            copy_debug_files(INSTALL_DIR, QTDEBUGFILES_DIR, PLATFORM, BUILD_TYPE)
+            copy_debug_files(INSTALL_DIR, QTDEBUGFILES_DIR, PLATFORM, CURR_BUILD_TYPE)
             if PLATFORM == "mac":
-                run_command(f'{SRC_DIR}/generate_debug_symbols.sh {QTDEBUGFILES_DIR} {BUILD_TYPE}', cwd=INSTALL_DIR, env=env)
+                run_command(f'{SRC_DIR}/generate_debug_symbols.sh {QTDEBUGFILES_DIR} {CURR_BUILD_TYPE}', cwd=INSTALL_DIR, env=env)
             print(f"Copying debug files... Done.")    
 
         BIN_DIR = INSTALL_DIR / 'bin' 
