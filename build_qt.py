@@ -395,7 +395,11 @@ def main():
     # Build Qt
     if Action.BUILD in ACTION:
         start = time.time()
-        build_command = f'cmake --build . --parallel '
+        if not env.get('CMAKE_BUILD_PARALLEL_LEVEL'):
+            default_parallel_level = max(1, (os.cpu_count() or 2) // 2)
+            env['CMAKE_BUILD_PARALLEL_LEVEL'] = str(default_parallel_level)
+            print(f"CMAKE_BUILD_PARALLEL_LEVEL not set; defaulting to {default_parallel_level}", flush=True)
+        build_command = 'cmake --build . '
         CURR_BUILD_DIR=BUILD_DIR
         CURR_BUILD_TYPE='-release'
         if BUILD_TYPE == '-debug': # we build to a different folder, but install to ./install
