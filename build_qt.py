@@ -58,7 +58,7 @@ def run_command(command, cwd=None, env=None):
     result = subprocess.run(command, shell=True, cwd=cwd, env=env)
     result.check_returncode()
 
-def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, cwd, env):
+def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, platform, cwd, env):
     """Initialize missing submodules without configuring the actual build directory."""
     requested_submodules = [s.strip() for s in submodules.split(',')]
     needs_init = False
@@ -73,6 +73,8 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
     if needs_init:
         print("First-time setup detected. Running Qt configure with -init-submodules...")
         command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
+        if platform == "windows":
+            command_text += ' -no-feature-vulkan'
 
         # Qt's -init-submodules also performs a CMake configure. Keep its cache
         # from affecting the subsequent Release or Debug configuration.
@@ -346,7 +348,8 @@ def main():
 
     # Initialize and update submodules
     if Action.CHECKOUT in ACTION or Action.GENERATE in ACTION:
-        initialize_and_update_submodules(CMAKE_SOURCE_PATH, CMAKE_GENERATOR, SUBMODULES, BUILD_DIR, env)
+        initialize_and_update_submodules(
+            CMAKE_SOURCE_PATH, CMAKE_GENERATOR, SUBMODULES, PLATFORM, BUILD_DIR, env)
 
     # Configure the build
     configure_command = (
