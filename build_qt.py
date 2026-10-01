@@ -19,16 +19,16 @@
 #   call "C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Auxiliary/Build/vcvarsall.bat" amd64
 # 3. Make sure QtWebEngine binaries are installed with the Qt open source installer in a folder of its own.
 # 4. Run with example command:
-#   python3 build_qt.py --qt_version=6.10.2 --platform=windows --qtwebengine_bin_dir=D:/path/to/Qt/install/folder/6.10.2/msvc
+#   python3 build_qt.py --qt_version=6.x.x --platform=windows --qtwebengine_bin_dir=D:/path/to/Qt/install/folder/6.x.x/msvc
 #
 ### Linux:
 #
 # 1. Open a terminal.
 # 2. Setup the environment (also make sure python3 is in the PATH). Example:
-#     export PATH=$PATH:/home/alexandrub/Qt_6_10_2/Tools/CMake/bin
+#     export PATH=$PATH:/home/alexandrub/Qt_6_x_x/Tools/CMake/bin
 # 3. Make sure QtWebEngine binaries are installed with the Qt open source installer in a folder of its own.
 # 4. Run with example command:
-#   python3 build_qt.py --qt_version=6.10.2 --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_10_2_qtwebengine/6.10.2/gcc_64/ --thirdparty_path=/home/alexandrub/dev2/thirdparty
+#   python3 build_qt.py --qt_version=6.x.x --platform=linux --qtwebengine_bin_dir=/home/alexandrub/Qt_6_x_x_qtwebengine/6.x.x/gcc_64/ --thirdparty_path=/home/alexandrub/dev2/thirdparty
 #
 # Note: building 'xcbglintegrations' can be tricky because you need many related libxcb -dev (-devel) packages installed on your distro.
 # You can look at qtbase/src/gui/configure.cmake for all that are needed. You can start with line:
@@ -181,38 +181,12 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
         command += f' -platform win32-msvc'
     elif platform == "mac":
         cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="arm64"')
+        cmake_args.append('-DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON')
 
     if cmake_args:
         command += ' -- ' + ' '.join(cmake_args)
 
     run_command(command, cwd=cwd, env=env)
-
-
-def suppress_xcode_check(cmake_source_path):
-    try:
-        file_path = cmake_source_path / "CMakeLists.txt"
-        set_as_warning = "set(QT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK ON [CACHE BOOL])\n"
-
-        # Read the existing contents of the file
-        with open(file_path, "r", encoding="utf-8") as file:
-            lines = file.readlines()
-
-        # Check if the setting is already set
-        for i, line in enumerate(lines):
-            if set_as_warning in line:
-                return
-
-        for i, line in enumerate(lines):
-            if "cmake_minimum_required" in line:
-                lines.insert(i + 1, set_as_warning)
-                break
-
-        # Write the updated contents back to the file
-        with open(file_path, "w", encoding="utf-8") as file:
-            file.writelines(lines)
-
-    except Exception as e:
-        print(f"Error modifying {file_path}: {e}")
 
 class Action(IntFlag):
     NONE = 0
@@ -223,7 +197,7 @@ class Action(IntFlag):
 
 def main():
     parser = argparse.ArgumentParser(description='Build Qt from source.')
-    parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.10.2')
+    parser.add_argument('--qt_version', required='True', help='Qt version, e.g.: 6.x.x')
     parser.add_argument('--platform', required='True', help='Platform: windows, linux, mac')
     parser.add_argument('--qtwebengine_bin_dir', required=True, help='QtWebEngine pre-built directory')
     parser.add_argument('--qtdebugfiles_dir', required=False, help='QtDebugFiles destination directory')
@@ -342,9 +316,6 @@ def main():
           print(f"Source directory is not empty. Skipping repository cloning.")
 
     CMAKE_SOURCE_PATH = SRC_DIR
-
-    if PLATFORM == "mac":
-        suppress_xcode_check(CMAKE_SOURCE_PATH)
 
     # Initialize and update submodules
     if Action.CHECKOUT in ACTION or Action.GENERATE in ACTION:
