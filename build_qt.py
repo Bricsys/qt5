@@ -182,6 +182,7 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
     elif platform == "mac":
         cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="arm64"')
         cmake_args.append('-DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON')
+        cmake_args.append('-DQT_NO_XCODE_MIN_VERSION_CHECK=ON')
 
     if cmake_args:
         command += ' -- ' + ' '.join(cmake_args)
