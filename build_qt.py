@@ -42,6 +42,7 @@
 #
 
 import os
+import shlex
 import subprocess
 import shutil
 from pathlib import Path
@@ -72,7 +73,7 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
     
     if needs_init:
         print("First-time setup detected. Running Qt configure with -init-submodules...")
-        command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {cmake_generator} -init-submodules -submodules {submodules}'
+        command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {shlex.quote(cmake_generator)} -init-submodules -submodules {submodules}'
         if platform == "windows":
             command_text += ' -no-feature-vulkan'
 
@@ -330,7 +331,7 @@ def main():
         f'{SKIP_MODULES} '
         f'-no-feature-spatialaudio ' # because we skipped module QtQuick3D
         f'-nomake examples -nomake tests '
-        f'-cmake-generator {CMAKE_GENERATOR} '
+        f'-cmake-generator {shlex.quote(CMAKE_GENERATOR)} '
         f'-prefix "{INSTALL_DIR}" '
     )
 
