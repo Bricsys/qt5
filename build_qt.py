@@ -59,6 +59,15 @@ def run_command(command, cwd=None, env=None):
     result = subprocess.run(command, shell=True, cwd=cwd, env=env)
     result.check_returncode()
 
+def get_platform_cmake_args(platform):
+    if platform == "mac":
+        return [
+            '-DCMAKE_OSX_ARCHITECTURES="arm64"',
+            '-DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON',
+            '-DQT_NO_XCODE_MIN_VERSION_CHECK=ON',
+        ]
+    return []
+
 def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodules, platform, cwd, env):
     """Initialize missing submodules without configuring the actual build directory."""
     requested_submodules = [s.strip() for s in submodules.split(',')]
@@ -76,6 +85,10 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
         command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {shlex.quote(cmake_generator)} -init-submodules -submodules {submodules}'
         if platform == "windows":
             command_text += ' -no-feature-vulkan'
+
+        cmake_args = get_platform_cmake_args(platform)
+        if cmake_args:
+            command_text += ' -- ' + ' '.join(cmake_args)
 
         # Qt's -init-submodules also performs a CMake configure. Keep its cache
         # from affecting the subsequent Release or Debug configuration.
@@ -180,10 +193,8 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
         command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan'
     elif platform == "windows":
         command += f' -platform win32-msvc'
-    elif platform == "mac":
-        cmake_args.append('-DCMAKE_OSX_ARCHITECTURES="arm64"')
-        cmake_args.append('-DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON')
-        cmake_args.append('-DQT_NO_XCODE_MIN_VERSION_CHECK=ON')
+
+    cmake_args.extend(get_platform_cmake_args(platform))
 
     if cmake_args:
         command += ' -- ' + ' '.join(cmake_args)
