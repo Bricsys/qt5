@@ -85,6 +85,8 @@ def initialize_and_update_submodules(cmake_source_path, cmake_generator, submodu
         command_text = f'"{cmake_source_path / "configure"}" -cmake-generator {shlex.quote(cmake_generator)} -init-submodules -submodules {submodules}'
         if platform == "windows":
             command_text += ' -no-feature-vulkan'
+        elif platform == "mac":
+            command_text += ' -no-feature-vulkan'
 
         cmake_args = get_platform_cmake_args(platform)
         if cmake_args:
@@ -193,6 +195,8 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
         command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan'
     elif platform == "windows":
         command += f' -platform win32-msvc'
+    elif platform == "mac":
+        command += ' -no-feature-vulkan'
 
     cmake_args.extend(get_platform_cmake_args(platform))
 
