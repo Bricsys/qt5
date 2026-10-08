@@ -113,28 +113,36 @@ def get_debug_files_extension(platform):
 
 def copy_with_overwrite(src_dir, dest_dir):
     """Copy contents of src_dir to dest_dir, overwriting existing files."""
-    def _copy_function(src, dst, *, follow_symlinks=True):
-        """Custom copy function that handles symlinks and overwrites."""
-        if os.path.islink(src):
-            # Remove existing symlink/file at destination
-            if os.path.lexists(dst):
-                os.unlink(dst)
-            linkto = os.readlink(src)
-            os.symlink(linkto, dst)
+    def _remove_destination(path):
+        if os.path.islink(path) or not os.path.isdir(path):
+            os.unlink(path)
         else:
-            shutil.copy2(src, dst, follow_symlinks=follow_symlinks)
-    
+            shutil.rmtree(path)
+
+    def _copy_entry(src, dst):
+        if os.path.islink(src):
+            if os.path.lexists(dst):
+                _remove_destination(dst)
+            os.symlink(os.readlink(src), dst)
+        elif os.path.isdir(src):
+            if os.path.lexists(dst) and (os.path.islink(dst) or not os.path.isdir(dst)):
+                _remove_destination(dst)
+            os.makedirs(dst, exist_ok=True)
+            for child in src.iterdir():
+                _copy_entry(child, dst / child.name)
+            shutil.copystat(src, dst)
+        else:
+            if os.path.isdir(dst) and not os.path.islink(dst):
+                raise IsADirectoryError(f"Cannot overwrite directory with file: {dst}")
+            if os.path.islink(dst):
+                _remove_destination(dst)
+            shutil.copy2(src, dst)
+
     for item in src_dir.iterdir():
         # Check if any part of the path is '.svn'
         if '.svn' in item.parts:
             continue
-        s = item
-        d = dest_dir / item.name
-        if item.is_dir():
-            # Use copytree with symlinks=False so copy_function handles everything
-            shutil.copytree(s, d, dirs_exist_ok=True, symlinks=False, copy_function=_copy_function)
-        else:
-            _copy_function(str(s), str(d))
+        _copy_entry(item, dest_dir / item.name)
 
 def copy_debug_files(src_dir, dest_dir, platform, build_type):
     """Copy only debug files from src_dir to dest_dir, overwriting existing files."""
