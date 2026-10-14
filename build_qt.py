@@ -200,7 +200,7 @@ def run_configure_command(command=None, platform="windows", cwd=None, env=None, 
     cmake_args = list(extra_cmake_args or [])
 
     if platform == "linux":
-        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan'
+        command += f' -qpa xcb -default-qpa xcb -xcb -xcb-xlib -bundled-xcb-xinput -feature-wayland-client -feature-vulkan -feature-wayland-vulkan-server-buffer'
     elif platform == "windows":
         command += f' -platform win32-msvc'
     elif platform == "mac":
